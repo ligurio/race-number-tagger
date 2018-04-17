@@ -1,0 +1,35 @@
+# https://blog.mturk.com/tutorial-annotating-images-with-bounding-boxes-using-amazon-mechanical-turk-42ab71e5068a
+
+import boto
+from boto.mturk.connection import MTurkConnection
+from boto.mturk.question import HTMLQuestion
+from boto.mturk.layoutparam import LayoutParameter
+from boto.mturk.layoutparam import LayoutParameters
+import json
+
+# Create your connection to MTurk
+mtc = MTurkConnection(aws_access_key_id='AKIAJRNJOVSR66N43YIQ',
+aws_secret_access_key='5ZaO6VMWHUsKDQT2ncLO8jRGv3z0QUKynLqDl4FC',
+host="mechanicalturk.sandbox.amazonaws.com",
+#host='mechanicalturk.amazonaws.com',
+proxy="proxy.avp.ru",
+proxy_port="8080",
+proxy_user="svc_linuxrepoproxy",
+proxy_pass="linux#Repo8proX$y")
+
+# This is the value you reeceived when you created the HIT
+# You can also retrieve HIT IDs by calling GetReviewableHITs
+# and SearchHITs. See the links to read more about these APIs.
+hit_id = "31S7M7DAGFPYLGQYRI5SD078ZHUTLH"
+result = mtc.get_assignments(hit_id)
+assignment = result[0]
+worker_id = assignment.WorkerId
+for answer in assignment.answers[0]:
+  if answer.qid == 'annotation_data':
+    worker_answer = json.loads(answer.fields[0])
+    
+print("The Worker with ID {} gave the answer {}".format(worker_id, worker_answer))
+
+left = worker_answer[0]['left']
+top  = worker_answer[0]['top']
+print("The top and left coordinates are {} and {}".format(top, left))
