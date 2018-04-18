@@ -44,5 +44,21 @@
 - https://github.com/KateRita/bib-tagger
 - https://github.com/matthewearl/deep-anpr
 - https://github.com/fizyr/keras-retinanet
-- https://github.com/potterhsu/SVHNClassifier
+- https://github.com/potterhsu/SVHNClassifier (multi-digit)
 - https://github.com/penny4860/SVHN-deep-digit-detector
+- https://itaicaspi.github.io/SVHN-Multi-Digit-torch/
+- https://github.com/kjw0612/awesome-deep-vision
+- https://github.com/KateRita/bib-tagger
+- можно использовать как основу своей модели https://github.com/keras-team/keras/issues/3928
+- пример https://github.com/nate-parrott/juypter-notebooks/blob/master/svhn-keras.ipynb
+- https://gist.github.com/bellbind/6698114f1c601d45b7bdaa5516284707
+- https://machinelearningmastery.com/handwritten-digit-recognition-using-convolutional-neural-networks-python-keras/
+- https://github.com/keras-team/keras/tree/master/examples
+- https://gggdomi.github.io/keras-workshop/notebook.html
+- https://github.com/yeephycho/tensorflow_input_image_by_tfrecord
+- [Number plate recognition with Tensorflow](https://matthewearl.github.io/2016/05/06/cnn-anpr/)
+- https://github.com/emedvedev/attention-ocr
+- Faster R-CNN
+  - +video https://github.com/riadhayachi/faster-rcnn-keras
+  - https://github.com/jinfagang/keras_frcnn
+  - https://github.com/fizyr/keras-retinanet

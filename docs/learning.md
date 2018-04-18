@@ -1,35 +1,12 @@
-
 ### TODO
 
 - увеличить изображения в наборе данных MNIST до размера моих кусков и обучить
 мою модель на этих данных
-- сделать скрипт, который будет резать изображения на куски, сохранять их в
-файлы для обучения и ставить в соответствие цифру
+- ~~сделать скрипт, который будет резать изображения на куски, сохранять их в
+файлы для обучения и ставить в соответствие цифру~~
 - ~~вычислить размер куска для резки фотографий (75-й процентиль)~~
 - ~~сделать скрипт для обновления аннотаций (каждый бокс - только одна цифра)~~
-
-------------
-- в первую очередь сделать демо: показывать картинку с размеченными номерами и список номеров в тексте не показывать
-- сервис: проверять тип файла и не принимать неграфические файлы, сохранять SHA256 для файлов для дальнейших разборок если будут
 - ~~создать проект по аннотации фотографий https://requester.mturk.com/create/projects/1150899/edit~~
-- https://github.com/kjw0612/awesome-deep-vision
-- попробовать использовать чужие модели
-  - https://github.com/KateRita/bib-tagger
-  - можно использовать как основу своей модели https://github.com/keras-team/keras/issues/3928
-  - пример https://github.com/nate-parrott/juypter-notebooks/blob/master/svhn-keras.ipynb
-  - попробовать - https://itaicaspi.github.io/SVHN-Multi-Digit-torch/
-  - попробовать - https://github.com/potterhsu/SVHNClassifier (multi-digit)
-  - https://gist.github.com/bellbind/6698114f1c601d45b7bdaa5516284707
-  - https://machinelearningmastery.com/handwritten-digit-recognition-using-convolutional-neural-networks-python-keras/
-  - https://github.com/keras-team/keras/tree/master/examples
-  - https://gggdomi.github.io/keras-workshop/notebook.html
-  - https://github.com/yeephycho/tensorflow_input_image_by_tfrecord
-  - [Number plate recognition with Tensorflow](https://matthewearl.github.io/2016/05/06/cnn-anpr/)
-  - https://github.com/emedvedev/attention-ocr
-  - Faster R-CNN
-    - +video https://github.com/riadhayachi/faster-rcnn-keras
-    - https://github.com/jinfagang/keras_frcnn
-    - https://github.com/fizyr/keras-retinanet
 - ~~аннотировать фотографии из обучающей выборки~~
 - ~~прочитать Deep Learning with Python~~
 - ~~подготовить обучающую выборку~~
@@ -48,6 +25,8 @@
   - https://patents.google.com/patent/US7047214?oq=7%2c047%2c214
   - https://patents.google.com/patent/US8442922B2/en
 - интегрироваться с https://www.imgix.com/
+- в первую очередь сделать демо: показывать картинку с размеченными номерами и список номеров в тексте не показывать
+- сервис: проверять тип файла и не принимать неграфические файлы, сохранять SHA256 для файлов для дальнейших разборок если будут
 
 ### Теория
 
