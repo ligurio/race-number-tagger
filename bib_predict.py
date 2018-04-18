@@ -22,7 +22,6 @@ def create_model():
     model.summary()
     return model
 
-
 img = cv2.imread(sys.argv[1])
 img = cv2.resize(img, (img_width, img_height))
 model = create_model()

@@ -14,6 +14,14 @@ train_samples = 60000
 validation_samples = 10000
 epoch = 30
 
+"""
+ModelCheckpoint https://keras.io/callbacks/
+
+data structure https://gist.github.com/fchollet/0830affa1f7f19fd47b06d4cf89ed44d
+
+"""
+
+
 # ** Model Begins **
 model = Sequential()
 model.add(Convolution2D(16, 5, 5, activation='relu', input_shape=(img_width, img_height, 3)))

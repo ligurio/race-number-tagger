@@ -8,6 +8,7 @@ from keras import backend as K
 
 import matplotlib.pyplot as plt
 import numpy as np
+import settings
 
 batch_size = 128
 num_classes = 10
@@ -89,7 +90,11 @@ score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
-model_json = model.to_json()
-with open("model-train.json", "w") as json_file:
-    json_file.write(model_json)
-model.save_weights("model-train.h5")
+#model_json = model.to_json()
+#with open("model-train.json", "w") as json_file:
+#    json_file.write(model_json)
+#model.save_weights("model-train.h5")
+
+model.save(settings.MODEL_FILE, overwrite=True)
+
+# model = load_model(settings.MODEL_FILE)
