@@ -78,7 +78,7 @@ def write_json(filename, hits):
     pp.pprint(hits)
     with open(filename, 'w') as outfile:
             #outfile.write(json.dumps(hits, ensure_ascii=False))
-            outfile.write(json.dumps(updated_annotation, sort_keys=True, indent=4, separators=(',', ': ')))
+            outfile.write(json.dumps(hits, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
 def crop_box(image_file, path_to_box_image, box):
@@ -167,6 +167,7 @@ def is_intersected(label_box, box):
         
 
 def label_with_max_intersection(boxes, box):
+
     overlapArea = 0
     for b in boxes:
         overlap = is_intersected(b, box)
@@ -195,6 +196,7 @@ def crop(path_to_image, box_width, box_height):
 def main():
 
     results = settings.CSV_RESULTS
+    print "Reading CSV results %s" % results
     hits = read_mturk_csv(results)
     
     """
@@ -224,14 +226,17 @@ def main():
         img = { 'filename': image['filename'], 'boxes': [] }
         for k, box in enumerate(crop(path_to_image, box_h, box_w)):
             box['label'] = label_with_max_intersection(image['boxes'], box)
-            img['boxes'].append(box)
+            if not box['label']:
+                img['boxes'].append(box)
         print "[%s/%s] Processing %s" % (number, total_number, path_to_image)
         new_annotation.append(img)
         number+=1
         #crop_box(path_to_image, path_to_box_image, box):
 
-    # TODO: write boxes with labels only
+    # TODO:
+    # - write boxes with labels only
     write_json('annotation.json', new_annotation)
+    print "Update width %s and heigth %s in settings.py" % (box_w, box_h)
 
 
 if __name__ == '__main__':
