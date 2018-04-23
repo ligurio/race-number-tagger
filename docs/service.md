@@ -49,6 +49,13 @@
 
 ##### API
 
+###### Storage
+
 - Google Drive API: [PyDrive](https://pythonhosted.org/PyDrive/), [GDrive API](https://developers.google.com/drive/v3/web/quickstart/python), [Go Lang](https://gist.github.com/atotto/86fa30668473b41eeac7d750e5ad5f5c)
 - [Yandex.Fotki API](https://tech.yandex.ru/fotki/)
 - Dropbox API: https://www.dropbox.com/developers-v1/core/start/python
+
+###### Payment
+
+- http://fastspring.com/plans/
+- https://stripe.com/atlas/guides/saas-pricing
