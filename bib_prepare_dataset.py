@@ -9,19 +9,21 @@ import os
 import sys
 import json
 import pprint
+import random
 import numpy as np
 from PIL import Image
 from collections import namedtuple
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import settings
+import shutil
 
 
-def mean_box_dimension(hits):
-    """
-    на вход принимает аннотацию в JSON формате
-    и вычисляет размер боксов по 75 перцентилю
-    """
+def id_generator():
+    return ''.join([ random.choice(string.ascii_letters + string.digits) for n in xrange(32) ])
+
+def box_dim_percentile(hits, percentile):
+
     width = []
     height = []
     for image in hits:
@@ -29,11 +31,8 @@ def mean_box_dimension(hits):
             width.append(box['width'])
             height.append(box['height'])
 
-    w = np.array(width)
-    #print 'Width: 75th percentile %s, mean average %s' % (np.percentile(w, 75), np.mean(width))
-    h = np.array(height)
-    #print 'Heigth: 75th percentile %s, mean average %s' % (np.percentile(h, 75), np.mean(height))
-    return np.percentile(w, 75), np.percentile(h, 75)
+    return np.percentile(np.array(width), percentile),
+            np.percentile(np.array(height), percentile)
 
 
 def sanitize_boxes(boxes):
@@ -50,94 +49,89 @@ def sanitize_boxes(boxes):
     return updated_boxes
 
 
-def read_mturk_csv(csv_file):
+def read_csv(csv_file):
+    """
+    Read annotation CSV file downloaded from Amazon MTurk
+    """
 
     hits = []
     with open(csv_file, 'r') as fp:
         reader = csv.DictReader(fp)
-        header = next(reader, None)
+        # skip header
+        next(reader, None)
         for line in reader:
-            status = line['AssignmentStatus']
-            if status == "Rejected":
+            if line['AssignmentStatus'] == "Rejected":
                 continue
-            filename = line['Input.objects_to_find']
-            # FIXME: почему-то пропускает некоторые изображения
-            try:
-                boxes = sanitize_boxes(json.loads(line['Answer.annotation_data']))
-            except ValueError:
-                continue
-            hits.append({"filename": filename, "boxes": boxes})
+            boxes = json.loads(line['Answer.annotation_data'])
+            hits.append({ "filename": line['Input.objects_to_find'], "boxes": boxes })
 
     return hits
 
 
 def write_json(filename, hits):
     
-    print "Written to %s" % filename
+    print "JSON written to %s" % filename
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(hits)
     with open(filename, 'w') as outfile:
-            #outfile.write(json.dumps(hits, ensure_ascii=False))
             outfile.write(json.dumps(hits, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
-def crop_box(image_file, path_to_box_image, box):
+def image_crop(orig_image_file, crop_image_file, box):
 
-    im = Image.open(image_file)
+    os.path.exists(orig_image_file)
+
+    im = Image.open(orig_image_file)
     piece = im.crop(box)
     img = Image.new('RGB', (box['height'], box['width']), 255)
     img.paste(piece)
-    img.save(box_image)
+    img.save(crop_image_file)
 
 
-def draw_box(filename, boxes, image_path, save = False):
-
-    """
-    Draw annotated box on an image and show an image
-    """
-
-    fullpath = os.path.join(image_path, filename)
-    im = np.array(Image.open(fullpath), dtype=np.uint8)
-    fig, ax = plt.subplots(1)
-    ax.imshow(im)
-
-    for box in boxes:
-        rect = patches.Rectangle((box["left"], box["top"]), box["width"], box["height"],
-                                linewidth=1, edgecolor='r', facecolor='none')
-        ax.add_patch(rect)
-        ax.annotate(box['label'], (box["left"] + 25, box["top"] - 25), color='red', weight='bold',
-                    fontsize=15, ha='center', va='center')
-    #plt.show()
-
-    if save:
-        name = filename.split('.')[0]
-        annotated_image = name + '-annotate.png'
-        print "Saved to %s" % annotated_image
-        fig.savefig(annotated_image)
-    plt.close(fig)
-    plt.close('all')
+#def draw_box(filename, boxes, image_path, save = False):
+#
+#    """
+#    Draw annotated box on an image, show and save an image
+#    """
+#
+#    fullpath = os.path.join(image_path, filename)
+#    im = np.array(Image.open(fullpath), dtype=np.uint8)
+#    fig, ax = plt.subplots(1)
+#    ax.imshow(im)
+#
+#    for box in boxes:
+#        rect = patches.Rectangle((box["left"], box["top"]), box["width"], box["height"],
+#                                linewidth=1, edgecolor='r', facecolor='none')
+#        ax.add_patch(rect)
+#        ax.annotate(box['label'], (box["left"] + 25, box["top"] - 25), color='red', weight='bold',
+#                    fontsize=15, ha='center', va='center')
+#    #plt.show()
+#
+#    if save:
+#        name = filename.split('.')[0]
+#        annotated_image = name + '-annotate.png'
+#        print "Saved to %s" % annotated_image
+#        fig.savefig(annotated_image)
+#    plt.close(fig)
+#    plt.close('all')
 
 
 def split_box_per_number(box):
-    """
-    на вход принимает словарь для бокса,
-    на выходе список словарей с боксами
-    :param box - dict with label, top, left, width and height keys
 
-    """
+    assert type(box) is dict
     
     label = box['label']
     numbers = len(str(label))
     start_x = box['left']
     start_y = box['top']
     splitted_width = box['width'] / numbers
-    boxes = []
     for l in str(label):
-        box = { 'label': l, 'left': start_x, 'top': start_y, 'height': box['height'], 'width': splitted_width }
-        boxes.append(box)
+        yield { 'label': l,
+                'left': start_x,
+                'top': start_y,
+                'height': box['height'],
+                'width': splitted_width }
         start_x = start_x + splitted_width
-
-    return boxes
 
 
 def is_intersected(label_box, box):
@@ -177,7 +171,7 @@ def label_with_max_intersection(boxes, box):
     return overlapArea
 
 
-def crop(path_to_image, box_width, box_height):
+def image_crop(path_to_image, box_width, box_height):
 
     # https://stackoverflow.com/questions/5953373/how-to-split-image-into-multiple-pieces-in-python
     # разделить изображение на одинаковые участки и вернуть список боксов для таких участков
@@ -193,51 +187,82 @@ def crop(path_to_image, box_width, box_height):
             yield box
 
 
+def prepare_dir_struct(base_dir, train_dir, validation_dir, test_dir):
+
+    """
+    Create directories:
+    race_numbers/{train, validation,test}/{0,1,2,3,4,5,6,7,8,9}
+
+    """
+
+    os.mkdir(base_dir)
+    os.mkdir(train_dir)
+    os.mkdir(validation_dir)
+    os.mkdir(test_dir)
+
+    for number in range(0, 9):
+        train_num_dir = os.path.join(train_dir, str(number))
+        os.mkdir(train_num_dir)
+
+        validation_num_dir = os.path.join(validation_dir, str(number))
+        os.mkdir(validation_num_dir)
+
+        test_num_dir = os.path.join(test_dir, str(number))
+        os.mkdir(test_num_dir)
+
+
 def main():
 
-    results = settings.CSV_RESULTS
-    print "Reading CSV results %s" % results
-    hits = read_mturk_csv(results)
-    
-    """
-    на вход принимает аннотацию в JSON формате и записывает в другой файл
-    аннотацию с отдельным боксом для каждой цифры в номере
-    """
-    updated_annotation = []
-    for image in hits:
-        boxes = []
+    base_dir = './data/race_numbers'
+    print "Reading CSV results %s" % settings.CSV_RESULTS
+    hits = read_csv(settings.CSV_RESULTS)
+
+    # split images on single number in annotation
+    annotation = []
+    for image in hits[10]:
         for box in image['boxes']:
-            boxes.extend(split_box_per_number(box)) 
-        updated_annotation.append({ 'filename': image['filename'], 'boxes': boxes })
-        #draw_box(image['filename'], boxes, './mturk_1_100/')
+            boxes = [ b for b in split_box_per_number(box) ]
+            annotation.extend('filename': image['filename'], 'boxes': boxes)
 
-    # calculate mean box size with single number (mtuk-json-calc-average-size.py)
-    box_w, box_h = mean_box_dimension(updated_annotation)
+    box_w, box_h = box_dim_percentile(annotation, 75)
 
-    # split images on rectangles with fixed size and
+    # For learning we should have images with same fixed size.
+    # Split images on images with box_w and box_h size. 
     # update labels according to intersections with boxes from annotation
-    # (mturk-box-intersection.py)
 
-    new_annotation = []
-    total_number = len(updated_annotation)
+    dataset_annotation = []
     number = 1
-    for image in updated_annotation:
+    for image in len(annotation):
         path_to_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
-        img = { 'filename': image['filename'], 'boxes': [] }
-        for k, box in enumerate(crop(path_to_image, box_h, box_w)):
+        for box in image_crop(path_to_image, box_w, box_h):
             box['label'] = label_with_max_intersection(image['boxes'], box)
-            if not box['label']:
-                img['boxes'].append(box)
-        print "[%s/%s] Processing %s" % (number, total_number, path_to_image)
-        new_annotation.append(img)
-        number+=1
-        #crop_box(path_to_image, path_to_box_image, box):
+            if box['label']:
+                dataset_annotation.append({ 'filename': image['filename'], 'boxes': [box] })
+        number += 1
+        print "[%s/%s] Processing %s" % (number, len(annotation), path_to_image)
 
-    # TODO:
-    # - write boxes with labels only
-    write_json('annotation.json', new_annotation)
+    train_dir = os.path.join(base_dir, 'train')
+    validation_dir = os.path.join(base_dir, 'validation')
+    test_dir = os.path.join(base_dir, 'test')
+    prepare_dir_struct('data/race_numbers', train_dir, validation_dir, test_dir)
+    #assert (settings.TRAIN_NUM + settings.TEST_NUM + settings.VALIDATE_NUM) == len(dataset_annotation)
+    random.shuffle(dataset_annotation)
+    for image in dataset_annotation[settings.TRAIN_NUM]:
+        filename = image['filename'].split('.')[0] + id_generator() + '.jpg'
+        image['filename'] = filename
+        number = image['boxes'][0]['label']
+
+        src_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
+        dst_image = os.path.join(train_dir, str(number), filename)
+        image_crop(src_image, dst_image, box)
+
+    print('total training images:', len(os.listdir(train_num_dir)))
+    print('total validation images:', len(os.listdir(validation_num_dir)))
+    print('total test images:', len(os.listdir(test_num_dir)))
+
+    write_json('annotation.json', dataset_annotation)
+    write_json('hits.json', hits)
     print "Update width %s and heigth %s in settings.py" % (box_w, box_h)
-
 
 if __name__ == '__main__':
     main()
