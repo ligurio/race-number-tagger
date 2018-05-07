@@ -103,8 +103,7 @@ def image_crop(orig_image_file, crop_image_file, box):
 
     assert os.path.exists(orig_image_file)
 
-    im = Image.open(orig_image_file)
-    w, h = im.size
+    w, h = img_size(orig_image_file)
     area = (box['left'], box['top'] - box['height'], box['left'] + box['width'], box['top'])
     size = (int(box['width']), int(box['height']))
     piece = im.crop(area)
@@ -214,6 +213,13 @@ def build_dateset(annotation, base_dir):
            len([ f for f in find_files(test_dir, '*.jpg') ])
 
 
+def img_size(img_path):
+    im = Image.open(path_to_image)
+    img_width, img_height = im.size
+    im.close
+    return img_width, img_height
+
+
 def images_to_pieces(annotation, box_w, box_h, base_dir):
 
     pieces_annotation = []
@@ -221,10 +227,7 @@ def images_to_pieces(annotation, box_w, box_h, base_dir):
     for image in annotation:
         path_to_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
         print "[%s/%s] Splitting image %s" % (number, len(annotation), path_to_image)
-        im = Image.open(path_to_image)
-        img_width, img_height = im.size
-        im.close
-
+        img_width, img_height = img_size(path_to_image)
         permitted_labels = [ b['label'] for b in image['boxes']]
         print "Permitted labels", permitted_labels
 
