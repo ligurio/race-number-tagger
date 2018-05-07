@@ -1,7 +1,9 @@
 ### TODO
 
-- увеличить изображения в наборе данных MNIST до размера моих кусков и обучить
-мою модель на этих данных
+- слишком много изображений без цифр в наборе для обучения
+- научиться увеличивать изображения в наборе данных MNIST до размера моих кусков
+- обучить модель сначала на наборе данных MNIST, потом на моем наборе данных
+
 - ~~сделать скрипт, который будет резать изображения на куски, сохранять их в
 файлы для обучения и ставить в соответствие цифру~~
 - ~~вычислить размер куска для резки фотографий (75-й процентиль)~~
@@ -21,17 +23,36 @@
 - вырезка спортсмена из фотографии [Semantic segmentation](https://github.com/aurora95/Keras-FCN)
 - распознавать спортсменов на видео
 - использовать номера и распознавалку вместо чипов
-- патенты в штатах
-  - https://patents.google.com/patent/US7047214?oq=7%2c047%2c214
-  - https://patents.google.com/patent/US8442922B2/en
 - интегрироваться с https://www.imgix.com/
 - в первую очередь сделать демо: показывать картинку с размеченными номерами и список номеров в тексте не показывать
 - сервис: проверять тип файла и не принимать неграфические файлы, сохранять SHA256 для файлов для дальнейших разборок если будут
 
 ### Теория
 
-#### Classification
+### Похожие проекты:
 
+- https://github.com/KateRita/bib-tagger
+
+- https://github.com/matthewearl/deep-anpr
+- https://github.com/fizyr/keras-retinanet
+- https://github.com/potterhsu/SVHNClassifier (multi-digit)
+- https://github.com/penny4860/SVHN-deep-digit-detector
+- https://itaicaspi.github.io/SVHN-Multi-Digit-torch/
+- https://github.com/kjw0612/awesome-deep-vision
+- можно использовать как основу своей модели https://github.com/keras-team/keras/issues/3928
+- пример https://github.com/nate-parrott/juypter-notebooks/blob/master/svhn-keras.ipynb
+- https://gist.github.com/bellbind/6698114f1c601d45b7bdaa5516284707
+- https://machinelearningmastery.com/handwritten-digit-recognition-using-convolutional-neural-networks-python-keras/
+- https://github.com/keras-team/keras/tree/master/examples
+- https://gggdomi.github.io/keras-workshop/notebook.html
+- https://github.com/yeephycho/tensorflow_input_image_by_tfrecord
+- [Number plate recognition with Tensorflow](https://matthewearl.github.io/2016/05/06/cnn-anpr/)
+- https://github.com/emedvedev/attention-ocr
+- +video https://github.com/riadhayachi/faster-rcnn-keras
+- https://github.com/jinfagang/keras_frcnn
+- https://github.com/fizyr/keras-retinanet
+
+#### Classification
 
 - https://habrahabr.ru/company/recognitor/blog/221891/
 - https://www.opennet.ru/opennews/art.shtml?num=47950
@@ -50,18 +71,9 @@ Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=
 - https://github.com/chongyangtao/Awesome-Scene-Text-Recognition
 - статьи https://rodrigob.github.io/are_we_there_yet/build/classification_datasets_results.html
 - курс http://cs231n.stanford.edu/
-
 - A New Multi-modal Technique for Bib Number/Text Detection in Natural Images - Sangheeta RoyPalaiahnakote ShivakumaraEmail authorPrabir MondalR. RaghavendraUmapada PalTong Lu
 - A new multi-modal approach to bib number/text detection and recognition in Marathon images - Palaiahnakote Shivakumara, R. Raghavendra, Longfei Qin, Kiran B. Raja, Tong Lu, Umapada Pal
 - Racing Bib Number Recognition - Idan Ben-Ami, Tali Basha, Shai Avidan
-
-#### MSER
-
-- [Multiple View Semantic Segmentation for Street View Images](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.294.2706&rep=rep1&type=pdf)
-- Robust Wide Baseline Stereo from. Maximally Stable Extremal Regions. J. Matas. 1,2. , O. Chum. 1. , M. Urban. 1. , T. Pajdla.
-- Linear Time Maximally Stable Extremal Regions. David Nistér and Henrik
-- Maximally Stable Colour Regions for Recognition and Matching. Per-Erik Forssén
-- [COLOR BLOB SEGMENTATION BY MSER ANALYSIS](https://pdfs.semanticscholar.org/174e/27471718a33aa5f18aa9682f410cc50c3cb1.pdf)
 
 #### Segment detection
 
@@ -69,12 +81,16 @@ Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=
 - https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Erhan_Scalable_Object_Detection_2014_CVPR_paper.pdf
 - https://arxiv.org/pdf/1506.01497.pdf
 - https://pdfs.semanticscholar.org/713f/73ce5c3013d9fb796c21b981dc6629af0bd5.pdf
+- [Multiple View Semantic Segmentation for Street View Images](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.294.2706&rep=rep1&type=pdf)
+- Robust Wide Baseline Stereo from. Maximally Stable Extremal Regions. J. Matas. 1,2. , O. Chum. 1. , M. Urban. 1. , T. Pajdla.
+- Linear Time Maximally Stable Extremal Regions. David Nistér and Henrik
+- Maximally Stable Colour Regions for Recognition and Matching. Per-Erik Forssén
+- [COLOR BLOB SEGMENTATION BY MSER ANALYSIS](https://pdfs.semanticscholar.org/174e/27471718a33aa5f18aa9682f410cc50c3cb1.pdf)
 
 ### Обучение
 
 - Google Cloud https://cloud.google.com/ml-engine/ ([пример](https://github.com/emedvedev/attention-ocr))
-- GPU
-- CPU (может быть в 40 раз дольше, чем CPU)
+- GPU, CPU (может быть в 40 раз дольше, чем CPU)
 - Google AutoML https://www.blog.google/topics/google-cloud/cloud-automl-making-ai-accessible-every-business/
 
 ### Модель
@@ -93,7 +109,7 @@ Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=
 - книга Deep learning with Python
 - разрешение фотографии критично для распознования и здесь нужен crop
 
-### Датасеты
+### Наборы данных
 
 #### Готовые
 
@@ -101,7 +117,7 @@ Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=
 - https://www.kaggle.com/olgabelitskaya/svhn-preproccessed-fragments
 - [The Street View House Numbers (SVHN) Dataset](http://ufldl.stanford.edu/housenumbers/) (73257 digits for training, 26032 digits for testing, 531131 additional)
 
-#### Подготовка своего датасета:
+#### Подготовка своего набора данных:
 
 - подготовка изображений для обучения https://habrahabr.ru/post/311558/
 - источники реальных фотографий:
