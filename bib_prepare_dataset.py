@@ -213,7 +213,7 @@ def build_dateset(annotation, base_dir):
            len([ f for f in find_files(test_dir, '*.jpg') ])
 
 
-def img_size(img_path):
+def img_size(path_to_image):
     im = Image.open(path_to_image)
     img_width, img_height = im.size
     im.close
