@@ -133,7 +133,7 @@ def split_box_per_number(box):
 def overlap_area(box1, box2):
     """
     Decide is given box intersected with another box
-    :returns overlapArea or None if rectangles don't intersect
+    :returns overlapArea or 0 if rectangles don't intersect
     """
     
     Rectangle = namedtuple('Rectangle', 'xmin ymin xmax ymax')
@@ -143,12 +143,14 @@ def overlap_area(box1, box2):
     dy = min(ra.ymax, rb.ymax) - max(ra.ymin, rb.ymin)
     if (dx >= 0) and (dy >= 0):
 	return dx * dy
+    else:
+        return 0
         
 
-def max_overlap_label(boxes, box, threshold):
+def max_overlap_label(boxes, box, threshold=0):
     """
     take a label from box which has max overlap area with our box
-    :returns string with label
+    :returns string with label and overlapArea
     """
     maxArea = threshold
     label = ''
@@ -231,9 +233,8 @@ def images_to_pieces(annotation, box_w, box_h, base_dir):
         permitted_labels = [ b['label'] for b in image['boxes']]
         print "Permitted labels", permitted_labels
 
-        threshold = box_w * box_h * 0.5
         for box in image_split(img_width, img_height, box_w, box_h):
-            area, label = max_overlap_label(image['boxes'], box, threshold)
+            area, label = max_overlap_label(image['boxes'], box)
             if label and label.isdigit():
                 assert(label in permitted_labels)
                 box['label'] = label
@@ -243,6 +244,7 @@ def images_to_pieces(annotation, box_w, box_h, base_dir):
                 filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
                 dst_image = os.path.join(base_dir, 'check',  filename)
                 create_dir(os.path.join(base_dir, 'check'))
+
                 box_list = []
                 box_list.extend(image['boxes'])
                 box_list.append(box)
