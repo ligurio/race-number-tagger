@@ -1,103 +1,18 @@
 ### TODO
 
-- слишком много изображений без цифр в наборе для обучения
-- научиться увеличивать изображения в наборе данных MNIST до размера моих кусков
-- обучить модель сначала на наборе данных MNIST, потом на моем наборе данных
-
-- ~~сделать скрипт, который будет резать изображения на куски, сохранять их в
-файлы для обучения и ставить в соответствие цифру~~
-- ~~вычислить размер куска для резки фотографий (75-й процентиль)~~
-- ~~сделать скрипт для обновления аннотаций (каждый бокс - только одна цифра)~~
-- ~~создать проект по аннотации фотографий https://requester.mturk.com/create/projects/1150899/edit~~
-- ~~аннотировать фотографии из обучающей выборки~~
-- ~~прочитать Deep Learning with Python~~
-- ~~подготовить обучающую выборку~~
-- ~~научиться обучать и распознавать на простом примере~~
-- ~~сделать датасет из картинок с номерами в разных местах фотографии, заодно будут аннотации. Для шума достаточно взять фото с забегов или [imgaug](thttps://github.com/aleju/imgaug). Проверить модель на реальных фотографиях.~~
-- ~~сделать датасет из датасета c номерами домов с больше, чем одним номером на фото и проверить модель на реальных фотографиях~~
-- ~~попробовать датасет с номерами домов + распознование с crop c наложением~~
-- ~~загрузить фотографии для обучения~~
-- ~~найти фотографии с забегов для тестов~~
-- ~~найти датасеты и скрипты похожих задач с [kaggle](https://www.kaggle.com/)~~
 - двойные номера для эстафет и экиденов https://www.facebook.com/runningexpertise/photos/pcb.1970190036343349/1970200376342315/?type=3&theater, https://www.facebook.com/runningexpertise/photos/pcb.1970190036343349/1970205253008494/?type=3&theater
-- вырезка спортсмена из фотографии [Semantic segmentation](https://github.com/aurora95/Keras-FCN)
-- распознавать спортсменов на видео
+- поддержать видео
 - использовать номера и распознавалку вместо чипов
 - интегрироваться с https://www.imgix.com/
 - в первую очередь сделать демо: показывать картинку с размеченными номерами и список номеров в тексте не показывать
-- сервис: проверять тип файла и не принимать неграфические файлы, сохранять SHA256 для файлов для дальнейших разборок если будут
-
-### Теория
 
 ### Похожие проекты:
 
 - https://github.com/KateRita/bib-tagger
 
-- https://github.com/matthewearl/deep-anpr
-- https://github.com/fizyr/keras-retinanet
-- https://github.com/potterhsu/SVHNClassifier (multi-digit)
-- https://github.com/penny4860/SVHN-deep-digit-detector
-- https://itaicaspi.github.io/SVHN-Multi-Digit-torch/
-- https://github.com/kjw0612/awesome-deep-vision
-- можно использовать как основу своей модели https://github.com/keras-team/keras/issues/3928
-- пример https://github.com/nate-parrott/juypter-notebooks/blob/master/svhn-keras.ipynb
-- https://gist.github.com/bellbind/6698114f1c601d45b7bdaa5516284707
-- https://machinelearningmastery.com/handwritten-digit-recognition-using-convolutional-neural-networks-python-keras/
-- https://github.com/keras-team/keras/tree/master/examples
-- https://gggdomi.github.io/keras-workshop/notebook.html
-- https://github.com/yeephycho/tensorflow_input_image_by_tfrecord
-- [Number plate recognition with Tensorflow](https://matthewearl.github.io/2016/05/06/cnn-anpr/)
-- https://github.com/emedvedev/attention-ocr
-- +video https://github.com/riadhayachi/faster-rcnn-keras
-- https://github.com/jinfagang/keras_frcnn
-- https://github.com/fizyr/keras-retinanet
-
-#### Classification
-
-- https://habrahabr.ru/company/recognitor/blog/221891/
-- https://www.opennet.ru/opennews/art.shtml?num=47950
-- [Microsoft COCO: Common Objects in Context](https://arxiv.org/pdf/1405.0312.pdf)
-- http://cocodataset.org/#home
-- https://tryolabs.com/blog/2018/01/18/faster-r-cnn-down-the-rabbit-hole-of-modern-object-detection/
-- Ian J. Goodfellow, Yaroslav Bulatov, Julian Ibarz, Sacha Arnoud, and Vinay Shet (2013). Multi-digit Number Recognition from Street View Imagery using Deep Convolutional Neural Networks. [arXiv:1312.6082](https://arxiv.org/abs/1312.6082) [cs.CV]
-- Pierre Sermanet, Soumith Chintala, and Yann LeCun (2012). Convolutional Neural Networks Applied to House Numbers Digit Classification. [arXiv:1204.3968](https://arxiv.org/abs/1204.3968) [cs.CV]
-- Yuval Netzer, Tao Wang, Adam Coates, Alessandro Bissacco, Bo Wu, and Andrew Y. Ng (2011). Reading Digits in Natural Images with Unsupervised Feature Learning. *NIPS Workshop on Deep Learning and Unsupervised Feature Learning 2011*. ([Page](http://ufldl.stanford.edu/housenumbers/)|[PDF](http://ufldl.stanford.edu/housenumbers/nips2011_housenumbers.pdf))
-- Mark Grundland, and Neil A. Dodgson (2007). Decolorize: Fast, contrast enhancing, color to grayscale conversion. *Pattern Recognition*, **40** (11). [Page](http://dx.doi.org/10.1016/j.patcog.2006.11.003)
-- [Convolutional Neural Networks Applied to House Numbers Digit Classification](https://arxiv.org/pdf/1204.3968.pdf)
-- [Multi-digit Number Recognition from Street View Imagery using Deep Convolutional Neural Networks](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42241.pdf)
-- [Street View House Number Recognition using Deep Convolutional
-Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=courses:2017:cs551:03_report.pdf)
-- [Who is the best in SVHN?](https://rodrigob.github.io/are_we_there_yet/build/classification_datasets_results.html#5356484e)
-- https://github.com/chongyangtao/Awesome-Scene-Text-Recognition
-- статьи https://rodrigob.github.io/are_we_there_yet/build/classification_datasets_results.html
-- курс http://cs231n.stanford.edu/
-- A New Multi-modal Technique for Bib Number/Text Detection in Natural Images - Sangheeta RoyPalaiahnakote ShivakumaraEmail authorPrabir MondalR. RaghavendraUmapada PalTong Lu
-- A new multi-modal approach to bib number/text detection and recognition in Marathon images - Palaiahnakote Shivakumara, R. Raghavendra, Longfei Qin, Kiran B. Raja, Tong Lu, Umapada Pal
-- Racing Bib Number Recognition - Idan Ben-Ami, Tali Basha, Shai Avidan
-
-#### Segment detection
-
-- https://softwaremill.com/counting-objects-with-faster-rcnn/
-- https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Erhan_Scalable_Object_Detection_2014_CVPR_paper.pdf
-- https://arxiv.org/pdf/1506.01497.pdf
-- https://pdfs.semanticscholar.org/713f/73ce5c3013d9fb796c21b981dc6629af0bd5.pdf
-- [Multiple View Semantic Segmentation for Street View Images](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.294.2706&rep=rep1&type=pdf)
-- Robust Wide Baseline Stereo from. Maximally Stable Extremal Regions. J. Matas. 1,2. , O. Chum. 1. , M. Urban. 1. , T. Pajdla.
-- Linear Time Maximally Stable Extremal Regions. David Nistér and Henrik
-- Maximally Stable Colour Regions for Recognition and Matching. Per-Erik Forssén
-- [COLOR BLOB SEGMENTATION BY MSER ANALYSIS](https://pdfs.semanticscholar.org/174e/27471718a33aa5f18aa9682f410cc50c3cb1.pdf)
-
-### Обучение
-
-- Google Cloud https://cloud.google.com/ml-engine/ ([пример](https://github.com/emedvedev/attention-ocr))
-- GPU, CPU (может быть в 40 раз дольше, чем CPU)
-- Google AutoML https://www.blog.google/topics/google-cloud/cloud-automl-making-ai-accessible-every-business/
-
 ### Модель
 
 - сверточные сети и Faster R-CNN
-- keras, tensorflow
-- разрешение фотографии критично для распознования, нужен crop
 - [архитектура](https://matthewearl.github.io/2016/05/06/cnn-anpr/) и [модель](https://github.com/matthewearl/deep-anpr/blob/master/model.py) для распознавания автомобильных номеров
 
 ### Рекомендации от Паши
@@ -116,6 +31,7 @@ Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=
 - https://www.kaggle.com/debdoot/bdrw
 - https://www.kaggle.com/olgabelitskaya/svhn-preproccessed-fragments
 - [The Street View House Numbers (SVHN) Dataset](http://ufldl.stanford.edu/housenumbers/) (73257 digits for training, 26032 digits for testing, 531131 additional)
+- сделать с помощью [imgaug](thttps://github.com/aleju/imgaug)
 
 #### Подготовка своего набора данных:
 
@@ -165,8 +81,8 @@ Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=
 - https://github.com/cvhciKIT/sloth
 - http://www.robots.ox.ac.uk/~vgg/software/via/
 - https://github.com/CSAILVision/LabelMeAnnotationTool
-- с помощью Яндекс.Толока
-- https://www.mturk.com/ ($100-200)
+- Яндекс.Толока
+- https://www.mturk.com/ ($0.04 per image)
 - [Google Vision](https://cloud.google.com/vision/)
 
 
@@ -183,7 +99,7 @@ Neural Networks](http://www.iitp.ac.in/~arijit/dokuwiki/lib/exe/fetch.php?media=
 - nabegu.spb.ru (бесплатно)
 - [sport-vision](https://www.facebook.com/SportVision.Russia/) https://www.facebook.com/andrey.perep (Калашникова его знает)
 - https://www.facebook.com/BibTagger/
-- сервисы для аннотирования фотографий (тот же амазон тюрк и толока). стоимость на моем сервисе должна быть не выше стоимости у них
+- сервисы для аннотирования фотографий (тот же амазон тюрк и толока)
 - http://www.capcitysportsmedia.com/Bib-Tagging-Smugmug, стоимость 0.05$, время 24-48 часов, разметку делают руками
 - https://www.flashframe.io/#bg3 (похоже что используют Deep Learning - https://www.flashframe.io/blog/the-cutting-edge-of-race-photo-tagging-software/)
 - https://www.comerphotos.com/Bib-Tagging/Pricing ~0.04$

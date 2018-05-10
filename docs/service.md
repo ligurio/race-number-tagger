@@ -9,6 +9,7 @@
 номера и его нормализация.
 
 Фокус сервиса - разметка фотографий и видео для фотографов.
+- проверять тип файла и не принимать неграфические файлы, сохранять SHA256 для файлов для дальнейших разборок если будут
 - распознавание номера
 - автоматическое тегирование фотографий
 	https://github.com/karpathy/neuraltalk2
@@ -35,6 +36,12 @@
   - https://github.com/zhaque/django-saas-kit
   - https://www.infoq.com/presentations/saas-python
 
+### Стоимость разметки фотографий
+
+стоимость на моем сервисе должна быть не выше стоимости на Яндекс.Толока или Amazon MTurk.
+
+- http://fastspring.com/plans/
+- https://stripe.com/atlas/guides/saas-pricing
 
 ### Хранилище для загрузки фото на сервис
 
@@ -54,8 +61,3 @@
 - Google Drive API: [PyDrive](https://pythonhosted.org/PyDrive/), [GDrive API](https://developers.google.com/drive/v3/web/quickstart/python), [Go Lang](https://gist.github.com/atotto/86fa30668473b41eeac7d750e5ad5f5c)
 - [Yandex.Fotki API](https://tech.yandex.ru/fotki/)
 - Dropbox API: https://www.dropbox.com/developers-v1/core/start/python
-
-###### Payment
-
-- http://fastspring.com/plans/
-- https://stripe.com/atlas/guides/saas-pricing
