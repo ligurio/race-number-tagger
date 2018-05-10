@@ -21,13 +21,10 @@
 - скачать csv с https://requester.mturk.com/
 - проревьюить качество аннотаций ```mturk-csv-review.py```
 - удалить старый набор данных ```rm -rf data/race_numbers```
+- установить модули: ```pip install -r requirement.txt```
 - подготовить набор данных и аннотацию ```bib_prepare_dataset.py```
-в задании на Amazon Mechanical Turk есть указание выделять номер целиком. Но
-так как мы будем обучать модель на отдельных цифрах, то нам нужно сделать
-аннотацию с боксами для отдельных цифр.
-делает это.
-- обучение на данных MNIST - ```bib_learn_mnist.py```
+- обучение на наборе данных MNIST - ```bib_learn_mnist.py```
 - обучение на реальных изображениях ```bib_learn_custom_dataset.py```
-- использование ```bib_predict.py```
+- использование ```bib_predict.py sample.jpg```
 
 Copyright 2018 Sergey Bronnikov
