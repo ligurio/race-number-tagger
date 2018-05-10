@@ -26,7 +26,12 @@ img_path = sys.argv[1]
 print "Image:", img_path
 model = load_model(settings.MODEL_FILE)
 img_width, img_height = img_size(img_path)
-for piece in image_split(img_width, img_height, settings.BOX_WIDTH, settings.BOX_HEIGHT):
-    img = image.load_img(img_path, target_size=(img_width, img_height))
-    bestclass, bestconf = predict_image(image.img_to_array(img))
-    print 'I think this digit is a ' + bestclass + ' with ' + str(bestconf * 100) + '% confidence.'
+
+piece_area = settings.BOX_WIDTH * settings.BOX_HEIGHT
+if piece_area => img_width * img_height:
+    print "Image is too big. Size should be %s x %s" % (settings.BOX_WIDTH, settings.BOX_HEIGHT)
+    sys.exit(1)
+
+img = image.load_img(img_path, target_size=(img_width, img_height))
+bestclass, bestconf = predict_image(image.img_to_array(img))
+print 'I think this digit is a ' + bestclass + ' with ' + str(bestconf * 100) + '% confidence.'
