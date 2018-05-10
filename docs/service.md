@@ -9,12 +9,15 @@
 номера и его нормализация.
 
 Фокус сервиса - разметка фотографий и видео для фотографов.
-- проверять тип файла и не принимать неграфические файлы, сохранять SHA256 для файлов для дальнейших разборок если будут
+- проверять тип файла и не принимать неграфические файлы, сохранять SHA256 для
+файлов для дальнейших разборок если будут
 - распознавание номера
 - автоматическое тегирование фотографий
 	https://github.com/karpathy/neuraltalk2
 	https://twitter.com/NinoVerde/status/974008265393754113
 	https://github.com/anuragmishracse/caption_generator
+
+#### Идеи
 
 - для страницы с тестом ограничивать количество подключений
 ([nginx](https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html) или pf + httpd)
@@ -26,8 +29,10 @@
   - фотографии распознают воркеры, которых в зависимости от нагрузки может быть разное количество. Все они находятся за балансером (haproxy, relayd), так будет удобнее мониторить нагрузку и проще будет потом вынести этих воркеров на другой хост.
   каждый воркер висит на localhost:PORT.
 - Ruby template https://github.com/ept/saas-template
-- SLA: https://www.aptible.com/legal/service-level-agreement/, https://www.saashost.net/service-level-agreement-2/
-- Python template:
+- SLA:
+	https://www.aptible.com/legal/service-level-agreement/
+	https://www.saashost.net/service-level-agreement-2/
+- SaaS template on Python:
   - https://pypi.python.org/pypi/djaodjin-saas/0.2.6
   - https://stackoverflow.com/questions/9924169/how-to-create-saas-application-with-python-and-django
   - http://tastypieapi.org/

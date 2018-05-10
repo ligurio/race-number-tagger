@@ -21,7 +21,9 @@
 - скачать csv с https://requester.mturk.com/
 - проревьюить качество аннотаций ```mturk-csv-review.py```
 - удалить старый набор данных ```rm -rf data/race_numbers```
+- ```virtualenv pip```
 - установить модули: ```pip install -r requirement.txt```
+- ```source pip/bin/activate```
 - подготовить набор данных и аннотацию ```bib_prepare_dataset.py```
 - обучение на наборе данных MNIST - ```bib_train_mnist.py```
 - обучение на реальных изображениях ```bib_train_real.py```
