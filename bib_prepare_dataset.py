@@ -51,17 +51,34 @@ def draw_box(boxes, src_image, dst_image = None):
         ax.add_patch(rect)
         ax.annotate(box['label'], (box["left"] + 25, box["top"] - 25), color='red', weight='bold',
                     fontsize=15, ha='center', va='center')
-    #plt.show()
     fig.savefig(dst_image)
     plt.close(fig)
     plt.close('all')
 
 
+def is_intersected(box1, box2):
+    h_overlaps = (box1['left'] <= box2['left'] + box2['width']) and (box1['left'] + box1['width'] >= box2['left'])
+    v_overlaps = (box1['top'] - box1['height'] <= box2['top']) and (box1['top'] >= box2['top'] - box2['height'])
+
+    return h_overlaps and v_overlaps
+
+
 def id_generator():
+    """
+    Generate random string
+    :returns string
+    """
     return ''.join([ random.choice(string.ascii_letters + string.digits) for n in xrange(32) ])
 
 
 def box_dim_percentile(hits, percentile):
+    """
+    Calculate specified percentile of width and heights
+    for a list of boxes
+    :param hits - list of hits
+    :param percentile - percentile value
+    :returns pair of width and height
+    """
 
     width = []
     height = []
@@ -76,9 +93,10 @@ def box_dim_percentile(hits, percentile):
 def read_csv(csv_file):
     """
     Read annotation CSV file downloaded from Amazon MTurk
+    :param csv_file - path to the file in csv format
+    :returns dict with hit
     """
 
-    hits = []
     with open(csv_file, 'r') as fp:
         reader = csv.DictReader(fp)
         # skip header
@@ -87,9 +105,7 @@ def read_csv(csv_file):
             if line['AssignmentStatus'] == "Rejected":
                 continue
             boxes = json.loads(line['Answer.annotation_data'])
-            hits.append({ "filename": line['Input.objects_to_find'], "boxes": boxes })
-
-    return hits
+            yield { "filename": line['Input.objects_to_find'], "boxes": boxes }
 
 
 def write_json(filename, hits):
@@ -106,6 +122,7 @@ def image_crop(orig_image_file, crop_image_file, box):
     w, h = img_size(orig_image_file)
     area = (box['left'], box['top'] - box['height'], box['left'] + box['width'], box['top'])
     size = (int(box['width']), int(box['height']))
+    im = Image.open(orig_image_file)
     piece = im.crop(area)
     img = Image.new('RGB', size, (255,255,255,0))
     img.paste(piece)
@@ -113,18 +130,21 @@ def image_crop(orig_image_file, crop_image_file, box):
 
 
 def split_box_per_number(box):
+    """
+    Split annotated box with full number to a set of boxes with single number.
+    :param box - dict of original box with full number
+    :returns generator with box dicts
+    """
 
     assert type(box) is dict
     
     label = box['label']
-    numbers = len(str(label))
     start_x = box['left']
-    start_y = box['top']
-    splitted_width = box['width'] / numbers
-    for l in str(label):
-        yield { 'label': l,
+    splitted_width = box['width'] / len(str(label))
+    for number in str(label):
+        yield { 'label': number,
                 'left': start_x,
-                'top': start_y,
+                'top': box['top'],
                 'height': box['height'],
                 'width': splitted_width }
         start_x = start_x + splitted_width
@@ -133,50 +153,64 @@ def split_box_per_number(box):
 def overlap_area(box1, box2):
     """
     Decide is given box intersected with another box
+    :param box1 - dict
+    :param box2 - dict
     :returns overlapArea or 0 if rectangles don't intersect
     """
-    
+
     Rectangle = namedtuple('Rectangle', 'xmin ymin xmax ymax')
     ra = Rectangle(box1['left'], box1['top'] - box1['height'], box1['left'] + box1['width'], box1['top'])
     rb = Rectangle(box2['left'], box2['top'] - box2['height'], box2['left'] + box2['width'], box2['top'])
     dx = min(ra.xmax, rb.xmax) - max(ra.xmin, rb.xmin)
     dy = min(ra.ymax, rb.ymax) - max(ra.ymin, rb.ymin)
     if (dx >= 0) and (dy >= 0):
-	return dx * dy
+       return dx * dy
     else:
         return 0
-        
 
-def max_overlap_label(boxes, box, threshold=0):
+
+def max_overlap_box(boxes, box, threshold):
     """
-    take a label from box which has max overlap area with our box
-    :returns string with label and overlapArea
+    Find a box with max overlap with box from a list
+    :param boxes - list of boxes
+    :param box - box
+    :returns box dict
     """
+    
+    overlapBox = {}
     maxArea = threshold
-    label = ''
     for b in boxes:
         area = overlap_area(b, box)
         if area > maxArea:
             maxArea = area
-            label = b['label']
+            overlapBox = b
 
-    return maxArea, label
+    return overlapBox
 
 
 def image_split(img_width, img_height, box_width, box_height):
+    """
+    Split image for a smaller parts.
+    :param img_width - width of the original image
+    :param img_height - height of the original image
+    :param box_width - width of an image to split
+    :param box_height - height of an image to split
+    :returns generator with box dicts
+    """
 
     # https://stackoverflow.com/questions/5953373/how-to-split-image-into-multiple-pieces-in-python
     # разделить изображение на одинаковые участки и вернуть список боксов для таких участков
     # в формате {"height": 174, "width": 59, "top": 956, "left": 1692, "label": "5" }
+    # Участки пересекаются на box_width/2 по ширине и на box_height/2 по высоте
 
-    for y_pos in range(int(round(img_height // box_height))):
-        for x_pos in range(int(round(img_width // box_width))):
+    for y_pos in range(int(round(img_height // box_height)) * 2):
+        for x_pos in range(int(round(img_width // box_width)) * 2):
             box = { 'height': box_height, 'width': box_width,
-                    'top': y_pos*box_height, 'left': x_pos*box_width, 'label': '' }
+                    'top': y_pos*box_height/2, 'left': x_pos*box_width/2, 'label': '' }
             yield box
 
 
-def build_dateset(annotation, base_dir):
+def build_dataset(annotation, base_dir):
     """
 
     """
@@ -193,9 +227,11 @@ def build_dateset(annotation, base_dir):
     num_train_images = len(annotation) * settings.IMAGE_SUBSETS['train']/100
     num_validate_images = len(annotation) * settings.IMAGE_SUBSETS['validate']/100
     num_test_images = len(annotation) * settings.IMAGE_SUBSETS['test']/100
-    random.shuffle(annotation)
     num = 1
     for image in annotation:
+        label = str(image['boxes'][0]['label'])
+        if not label.isdigit():
+            continue
         if num < num_train_images:
             subdir = train_dir
         elif num >= num_train_images and num <= num_train_images + num_validate_images:
@@ -204,9 +240,8 @@ def build_dateset(annotation, base_dir):
             subdir = test_dir
         filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
         src_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
-        dst_image = os.path.join(subdir, str(image['boxes'][0]['label']), filename)
+        dst_image = os.path.join(subdir, label, filename)
         print "[%s/%s] Put %s to the data set" % (num, len(annotation), dst_image)
-        #draw_box(image['boxes'], src_image, dst_image)
         image_crop(src_image, dst_image, image['boxes'][0])
         num += 1
 
@@ -216,76 +251,68 @@ def build_dateset(annotation, base_dir):
 
 
 def img_size(path_to_image):
+    """
+    :param path_to_image - path to the image
+    :returns pair of width and height
+    """
+
     im = Image.open(path_to_image)
     img_width, img_height = im.size
     im.close
+
     return img_width, img_height
-
-
-def images_to_pieces(annotation, box_w, box_h, base_dir):
-
-    pieces_annotation = []
-    number = 1
-    for image in annotation:
-        path_to_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
-        print "[%s/%s] Splitting image %s" % (number, len(annotation), path_to_image)
-        img_width, img_height = img_size(path_to_image)
-        permitted_labels = [ b['label'] for b in image['boxes']]
-        print "Permitted labels", permitted_labels
-
-        for box in image_split(img_width, img_height, box_w, box_h):
-            area, label = max_overlap_label(image['boxes'], box)
-            if label and label.isdigit():
-                assert(label in permitted_labels)
-                box['label'] = label
-                print "Found label %s, overlap area %s" % (box, area)
-                pieces_annotation.append({ 'filename': image['filename'], 'boxes': [box] })
-                # keep images with piece overlapped with a number box
-                filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
-                dst_image = os.path.join(base_dir, 'check',  filename)
-                create_dir(os.path.join(base_dir, 'check'))
-
-                box_list = []
-                box_list.extend(image['boxes'])
-                box_list.append(box)
-                draw_box(box_list, path_to_image, dst_image)
-        number += 1
-
-    return pieces_annotation
 
 
 def main():
 
     base_dir = './data/race_numbers/'
     print "Reading CSV results %s" % settings.CSV_RESULTS
-    hits = read_csv(settings.CSV_RESULTS)
 
     annotation = []
-    for image in hits:
+    for image in read_csv(settings.CSV_RESULTS):
+        boxes = []
         for box in image['boxes']:
-            boxes = [ b for b in split_box_per_number(box) ]
-            annotation.append({ 'filename': image['filename'], 'boxes': boxes })
-    box_w, box_h = box_dim_percentile(annotation, 75)
+            boxes.extend([ b for b in split_box_per_number(box) ])
+        annotation.append({ 'filename': image['filename'], 'boxes': boxes })
+    box_w, box_h = box_dim_percentile(annotation, settings.PERCENTILE)
 
     # For learning we should have images with same fixed size.
     # Split original images on small images with fixed size (box_w x box_h)
     # and update labels according to intersections with boxes from annotation
-    dataset_annotation = images_to_pieces(annotation, box_w, box_h, base_dir)
-    assert (len(dataset_annotation) != 0)
+    number = 1
+    dataset_annotation = []
+    for image in annotation:
+        path_to_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
+        print "[%s/%s] Processing image %s" % (number, len(annotation), path_to_image)
+        img_width, img_height = img_size(path_to_image)
+        #boxes = [ box for box in image_split(img_width, img_height, box_w, box_h) ]
+        #boxes = []
+        #boxes.extend(image['boxes'])
+        for box in image_split(img_width, img_height, box_w, box_h):
+            overlapThreshold = box_w * box_h * 0.4
+            overlapBox = max_overlap_box(image['boxes'], box, overlapThreshold)
+            if overlapBox:
+                #boxes.append(box)
+                box['label'] = overlapBox['label']
+                dataset_annotation.append({ 'filename': image['filename'], 'boxes': [box] })
+        number += 1
 
-    # put images in directories
-    num_train, num_validation, num_test = build_dateset(dataset_annotation, base_dir)
+        #filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
+        #dst_image = os.path.join(base_dir, 'check',  filename)
+        #create_dir(os.path.join(base_dir, 'check'))
+        #draw_box(boxes, os.path.join('./data/original_data/', image['filename']), dst_image)
+
+    random.shuffle(dataset_annotation)
+    num_train, num_validation, num_test = build_dataset(dataset_annotation, base_dir)
     print 'total training images:', num_train
     print 'total validation images:', num_validation
     print 'total test images:', num_test
 
     # show information about processing annotation
-    print "total number of hits in original annotation", len(hits)
-    write_json('hits.json', hits)
-    write_json('hits-splitted.json', annotation)
-    print "total number of image in updated annotation", len(dataset_annotation)
-    write_json('hits-dataset.json', dataset_annotation)
-    print "update width %s and height %s in settings.py" % (box_w, box_h)
+    write_json('annotation.json', annotation)
+    print "total number of images in annotation with box per number", len(annotation)
+    print "total number of images in dataset annotation", len(dataset_annotation)
+    print "Please update width and height in settings.py by values %s and %s accordingly" % (box_w, box_h)
 
 
 if __name__ == '__main__':
