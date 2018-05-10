@@ -39,6 +39,10 @@ def find_files(directory, pattern):
 def draw_box(boxes, src_image, dst_image = None):
     """
     Draw boxes on an image
+    :param boxes - list with box dicts
+    :param src_image - image where boxes will be drawn
+    :param dst_image - save image with drawn boxes on this path
+    :returns
     """
 
     im = np.array(Image.open(src_image), dtype=np.uint8)
@@ -57,6 +61,13 @@ def draw_box(boxes, src_image, dst_image = None):
 
 
 def is_intersected(box1, box2):
+    """
+    Decide is a box intersected by another one or not.
+    :param box1 - box dict
+    :param box2 - box dict
+    :returns True of False
+    """
+
     h_overlaps = (box1['left'] <= box2['left'] + box2['width']) and (box1['left'] + box1['width'] >= box2['left'])
     v_overlaps = (box1['top'] - box1['height'] <= box2['top']) and (box1['top'] >= box2['top'] - box2['height'])
 
@@ -309,7 +320,7 @@ def main():
     print 'total test images:', num_test
 
     # show information about processing annotation
-    write_json('annotation.json', annotation)
+    write_json('data/annotation.json', annotation)
     print "total number of images in annotation with box per number", len(annotation)
     print "total number of images in dataset annotation", len(dataset_annotation)
     print "Please update width and height in settings.py by values %s and %s accordingly" % (box_w, box_h)
