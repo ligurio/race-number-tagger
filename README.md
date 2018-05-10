@@ -23,8 +23,8 @@
 - удалить старый набор данных ```rm -rf data/race_numbers```
 - установить модули: ```pip install -r requirement.txt```
 - подготовить набор данных и аннотацию ```bib_prepare_dataset.py```
-- обучение на наборе данных MNIST - ```bib_learn_mnist.py```
-- обучение на реальных изображениях ```bib_learn_custom_dataset.py```
+- обучение на наборе данных MNIST - ```bib_train_mnist.py```
+- обучение на реальных изображениях ```bib_train_real.py```
 - использование ```bib_predict.py sample.jpg```
 
 Copyright 2018 Sergey Bronnikov
