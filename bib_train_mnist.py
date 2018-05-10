@@ -113,5 +113,5 @@ print(model.summary())
 model_json = model.to_json()
 with open("model-train.json", "w") as json_file:
     json_file.write(model_json)
-model.save_weights(settings.MODEL_WEIGHTS_FILE)
-model.save(settings.MODEL_FILE, overwrite=True)
+model.save_weights(settings.MODEL_WEIGHTS_FILE_MNIST)
+model.save(settings.MODEL_FILE_MNIST, overwrite=True)

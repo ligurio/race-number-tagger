@@ -23,7 +23,7 @@ test_samples = len([ f for f in find_files(test_dir, '*.jpg') ])
 epochs = 30
 batch_size = 16
 
-# model = load_model(settings.MODEL_FILE)
+# model = load_model(settings.MODEL_FILE_MNIST)
 
 # ** Model Begins **
 model = Sequential()
@@ -75,5 +75,5 @@ print("Total: ", len(validation_generator.filenames))
 print("Loss: ", score[0], "Accuracy: ", score[1])
 print model.summary()
 
-model.save(settings.MODEL_FILE, overwrite=True)
-model.save_weights(settings.MODEL_WEIGHTS_FILE, overwrite=True)
+model.save(settings.MODEL_FILE_REAL, overwrite=True)
+model.save_weights(settings.MODEL_WEIGHTS_FILE_REAL, overwrite=True)
