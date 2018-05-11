@@ -69,9 +69,9 @@ class DatasetPreparationTest(unittest.TestCase):
                 {'height': 133, 'width': 52, 'top': 679, 'left': 510, 'label': '9'}
         ]
         box = { 'label': '', 'left': 240, 'top': 800, 'width': 460, 'height': 330 }
-        #area, label = max_overlap_label(boxes, box)
-        #self.assertEqual(label, '3')
-        #self.assertEqual(area, 41464)
+        overlapBox, area = max_overlap_box(boxes, box, threshold = 0.4)
+        self.assertEqual(overlapBox['label'], '3')
+        self.assertEqual(area, 41464)
 
 
     def test_random_max_intersection_label(self):
@@ -85,8 +85,8 @@ class DatasetPreparationTest(unittest.TestCase):
             boxes.append(rdict)
             areas.append(area)
 
-        #area, _ = max_overlap_box(boxes, box)
-        #self.assertEqual(area, max(areas))
+        _, area = max_overlap_box(boxes, box, threshold = 0.4)
+        self.assertEqual(area, max(areas))
 
     def test_split_box_per_number(self):
         # [{'height': 123, 'width': 69, 'top': 959, 'left': 1584, 'label': '1'},
