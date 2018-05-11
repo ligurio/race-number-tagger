@@ -32,6 +32,7 @@ def show(array):
     cv2.imshow('Resized image', array)
     print("Press any key")
     cv2.waitKey()
+    cv2.destroyAllWindows()
 
 
 def resize_images(image_arrays, size=[32, 32]):
@@ -111,7 +112,7 @@ print(model.summary())
 
 # save model
 model_json = model.to_json()
-with open("model-train.json", "w") as json_file:
+with open(settings.MODEL_JSON_MNIST, "w") as json_file:
     json_file.write(model_json)
 model.save_weights(settings.MODEL_WEIGHTS_FILE_MNIST)
 model.save(settings.MODEL_FILE_MNIST, overwrite=True)
