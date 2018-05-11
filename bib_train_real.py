@@ -4,6 +4,7 @@
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.models import model_from_json
+from keras.models import load_model
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Flatten, Dense
 from bib_prepare_dataset import create_dir
@@ -23,19 +24,7 @@ test_samples = len([ f for f in find_files(test_dir, '*.jpg') ])
 epochs = 30
 batch_size = 16
 
-# model = load_model(settings.MODEL_FILE_MNIST)
-
-# ** Model Begins **
-model = Sequential()
-model.add(Conv2D(16, (5, 5), activation='relu', input_shape=(settings.BOX_WIDTH, settings.BOX_HEIGHT, 3)))
-model.add(MaxPooling2D(2, 2))
-model.add(Conv2D(32, (5, 5), activation='relu'))
-model.add(MaxPooling2D(2, 2))
-model.add(Flatten())
-model.add(Dense(1000, activation='relu'))
-
-model.add(Dense(10, activation='softmax'))
-# ** Model Ends **
+model = load_model(settings.MODEL_FILE_MNIST)
 
 model.compile(loss='binary_crossentropy',
               optimizer='rmsprop',
@@ -53,14 +42,16 @@ validation_datagen = ImageDataGenerator(
 
 train_generator = train_datagen.flow_from_directory(
         train_dir,
-        target_size=(settings.BOX_WIDTH, settings.BOX_HEIGHT),
+        target_size=(settings.BOX_HEIGHT, settings.BOX_WIDTH),
         batch_size=32,
+        color_mode='grayscale',
         class_mode='categorical')
 
 validation_generator = validation_datagen.flow_from_directory(
         validation_dir,
-        target_size=(settings.BOX_WIDTH, settings.BOX_HEIGHT),
+        target_size=(settings.BOX_HEIGHT, settings.BOX_WIDTH),
         batch_size=32,
+        color_mode='grayscale',
         class_mode='categorical')
 
 model.fit_generator(
