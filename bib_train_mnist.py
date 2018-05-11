@@ -1,8 +1,3 @@
-# https://hackernoon.com/how-tensorflows-tf-image-resize-stole-60-days-of-my-life-aba5eb093f35
-# https://stackoverflow.com/questions/45024328/resize-mnist-in-tensorflow
-# https://www.tensorflow.org/api_docs/python/tf/image/resize_images
-# https://github.com/yunjey/domain-transfer-network/blob/master/prepro.py
-
 # source: https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
 
 from __future__ import print_function
