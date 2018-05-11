@@ -14,15 +14,7 @@
 
 - сверточные сети и Faster R-CNN
 - [архитектура](https://matthewearl.github.io/2016/05/06/cnn-anpr/) и [модель](https://github.com/matthewearl/deep-anpr/blob/master/model.py) для распознавания автомобильных номеров
-
-### Рекомендации от Паши
-
-- для обучения нужны десятки тысяч фотографий (чем больше, тем лучше для улучшения качества)
 - рекомендуемые алгоритмы: свертки и нейросети
-- рекомендуемые инструменты: tensorflow и [keras](https://keras.io/) (Python binding)
-- для обучения потребуются вычислительные ресурсы (возможно видеокарты, потому что на cpu можно неделю обучать), графические файлы требовательны к ресурсам
-- книга Deep learning with Python
-- разрешение фотографии критично для распознования и здесь нужен crop
 
 ### Наборы данных
 
@@ -35,35 +27,23 @@
 
 #### Подготовка своего набора данных:
 
+- для обучения нужны десятки тысяч фотографий (чем больше, тем лучше для улучшения качества)
 - подготовка изображений для обучения https://habrahabr.ru/post/311558/
-- источники реальных фотографий:
- - [Фотостоки](http://www.geran.in/2015/10/09/marathon_photo_sites/)
- - [Probeg](http://probeg.org/kalend/rezult.php).
- - http://probeg.org/probegim.php
-- ```python3 ../../ya.py -a 190988 -d . pvolan```
-- вычистка
- - ```fdupes -S -R data/```
- - ```find . -type f -iname "*.jpg" -exec exiftran -aig "{}" \;```
- - ```montage photo1.jpg photo2.jpg photo3.jpg photo4.jpg montage.jpg```
- - ```ls -laR > ls-laR.txt```
- - ```for i in `seq 1 1 402`; do dir=0$i; [[ -e $dir  ]] || echo $dir; done | wc -l```
- - убрать фотографии без номеров
- - ```mtree -k type,sha256digest -c -p runners > spec.txt```
- - убрать дублирующиеся фотографии https://gist.github.com/bobuk/4522091
-- **[Tutorial: Annotating images with bounding boxes using Amazon Mechanical Turk](https://blog.mturk.com/tutorial-annotating-images-with-bounding-boxes-using-amazon-mechanical-turk-42ab71e5068a)**
-- [Tutorial: How to verify crowdsourced training data using a Known Answer Review Policy](https://blog.mturk.com/tutorial-how-to-verify-crowdsourced-training-data-using-a-known-answer-review-policy-85596fb55ed)
-- [Tutorial: How to label thousands of images using the crowd](https://blog.mturk.com/tutorial-how-to-label-thousands-of-images-using-the-crowd-bea164ccbefc)
+- найти фото на [фотостоках](http://www.geran.in/2015/10/09/marathon_photo_sites/), [Probeg](http://probeg.org/kalend/rezult.php), http://probeg.org/probegim.php
+- [загрузить](https://yandex.ru/blog/fotki/51820): ```python3 ../../ya.py -a 190988 -d . pvolan```
+- убрать дубликаты: ```fdupes -S -R data/``` или https://gist.github.com/bobuk/4522091
+- перевернуть:```find . -type f -iname "*.jpg" -exec exiftran -aig "{}" \;```
+- убрать фотографии без номеров
+- сохранить список фото: ```mtree -k type,sha256digest -c -p runners > spec.txt; ls -laR > ls-laR.txt```
+- ```echo "objects_to_find,image_url" > list.csv```
+- ```ls -1 | while read f; do echo $f,https://s3.amazonaws.com/running-ml/$f; done >> list.csv```
+- загрузить для аннотирования:
+	- **[Tutorial: Annotating images with bounding boxes using Amazon Mechanical Turk](https://blog.mturk.com/tutorial-annotating-images-with-bounding-boxes-using-amazon-mechanical-turk-42ab71e5068a)**
+	- [Tutorial: How to verify crowdsourced training data using a Known Answer Review Policy](https://blog.mturk.com/tutorial-how-to-verify-crowdsourced-training-data-using-a-known-answer-review-policy-85596fb55ed)
+	- [Tutorial: How to label thousands of images using the crowd](https://blog.mturk.com/tutorial-how-to-label-thousands-of-images-using-the-crowd-bea164ccbefc)
+	- https://requester.mturk.com/batches/3180686
+	- https://s3.console.aws.amazon.com/s3/object/running-ml/0003_1683929.jpg?region=us-east-1&tab=overview
  
-
-```
-- ~/sources/runphoto/data/runners/processed/running/mturk_1_100
-- https://requester.mturk.com/batches/3180686
-- https://s3.console.aws.amazon.com/s3/object/running-ml/0003_1683929.jpg?region=us-east-1&tab=overview
-- echo "objects_to_find,image_url" > list.csv
-- ls -1 | while read f; do echo $f,https://s3.amazonaws.com/running-ml/$f; done >> list.csv
-```
- 
-С Яндекс.Фотки удобно скачивать с помощью скрипта https://yandex.ru/blog/fotki/51820.
 - https://s3.console.aws.amazon.com
 - потренироваться:
   - https://workersandbox.mturk.com/
