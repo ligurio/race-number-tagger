@@ -4,13 +4,12 @@ from keras.models import load_model
 from keras.preprocessing import image
 from bib_prepare_dataset import image_split
 from bib_prepare_dataset import img_size
-import matplotlib.pyplot as plt
 import sys
 import settings
 import numpy as np
 
 def predict_image(img):
-    arr = np.array(img).reshape((settings.BOX_WIDTH, settings.BOX_HEIGHT, 3))
+    arr = np.array(img).reshape((settings.BOX_HEIGHT, settings.BOX_WIDTH, 1))
     arr = np.expand_dims(arr, axis=0)
     prediction = model.predict(arr)[0]
     bestclass = ''
@@ -24,14 +23,7 @@ def predict_image(img):
 
 img_path = sys.argv[1]
 print "Image:", img_path
-model = load_model(settings.MODEL_FILE)
-img_width, img_height = img_size(img_path)
-
-piece_area = settings.BOX_WIDTH * settings.BOX_HEIGHT
-if piece_area => img_width * img_height:
-    print "Image is too big. Size should be %s x %s" % (settings.BOX_WIDTH, settings.BOX_HEIGHT)
-    sys.exit(1)
-
-img = image.load_img(img_path, target_size=(img_width, img_height))
+model = load_model(settings.MODEL_FILE_REAL)
+img = image.load_img(img_path, target_size=img_size(img_path), grayscale=True)
 bestclass, bestconf = predict_image(image.img_to_array(img))
 print 'I think this digit is a ' + bestclass + ' with ' + str(bestconf * 100) + '% confidence.'
