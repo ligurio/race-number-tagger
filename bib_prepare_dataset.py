@@ -185,7 +185,7 @@ def max_overlap_box(boxes, box, threshold):
     Find a box with max overlap with box from a list
     :param boxes - list of boxes
     :param box - box
-    :returns box dict
+    :returns box dict and overlap area
     """
     
     overlapBox = {}
@@ -196,7 +196,7 @@ def max_overlap_box(boxes, box, threshold):
             maxArea = area
             overlapBox = b
 
-    return overlapBox
+    return overlapBox, maxArea
 
 
 def image_split(img_width, img_height, box_width, box_height):
@@ -292,6 +292,7 @@ def main():
     # and update labels according to intersections with boxes from annotation
     number = 1
     dataset_annotation = []
+    overlapThreshold = box_w * box_h * 0.4
     for image in annotation:
         path_to_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
         print "[%s/%s] Processing image %s" % (number, len(annotation), path_to_image)
@@ -300,8 +301,7 @@ def main():
         #boxes = []
         #boxes.extend(image['boxes'])
         for box in image_split(img_width, img_height, box_w, box_h):
-            overlapThreshold = box_w * box_h * 0.4
-            overlapBox = max_overlap_box(image['boxes'], box, overlapThreshold)
+            overlapBox, _ = max_overlap_box(image['boxes'], box, overlapThreshold)
             if overlapBox:
                 #boxes.append(box)
                 box['label'] = overlapBox['label']
