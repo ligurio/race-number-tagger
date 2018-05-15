@@ -1,6 +1,4 @@
-# https://github.com/tanmayb123/MNIST-CNN-in-Keras/blob/master/customtrain.py
-# MNIST model example https://gist.github.com/fchollet/0830affa1f7f19fd47b06d4cf89ed44d
-
+import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.models import model_from_json
@@ -21,13 +19,14 @@ test_dir = os.path.join(base_dir, 'test')
 train_samples = len([ f for f in find_files(train_dir, '*.jpg') ])
 validation_samples = len([ f for f in find_files(validation_dir, '*.jpg') ])
 test_samples = len([ f for f in find_files(test_dir, '*.jpg') ])
-epochs = 30
+epochs = 15
 batch_size = 16
+#batch_size = 128
 
 model = load_model(settings.MODEL_FILE_MNIST)
 
-model.compile(loss='binary_crossentropy',
-              optimizer='rmsprop',
+model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
 train_datagen = ImageDataGenerator(
@@ -43,14 +42,14 @@ validation_datagen = ImageDataGenerator(
 train_generator = train_datagen.flow_from_directory(
         train_dir,
         target_size=(settings.BOX_HEIGHT, settings.BOX_WIDTH),
-        batch_size=32,
+        batch_size=batch_size,
         color_mode='grayscale',
         class_mode='categorical')
 
 validation_generator = validation_datagen.flow_from_directory(
         validation_dir,
         target_size=(settings.BOX_HEIGHT, settings.BOX_WIDTH),
-        batch_size=32,
+        batch_size=batch_size,
         color_mode='grayscale',
         class_mode='categorical')
 
