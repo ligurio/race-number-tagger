@@ -180,7 +180,7 @@ def overlap_area(box1, box2):
         return 0
 
 
-def max_overlap_box(boxes, box, threshold):
+def max_overlap_box(boxes, box, threshold=0):
     """
     Find a box with max overlap with box from a list
     :param boxes - list of boxes
@@ -292,26 +292,27 @@ def main():
     # and update labels according to intersections with boxes from annotation
     number = 1
     dataset_annotation = []
-    overlapThreshold = box_w * box_h * 0.4
+    #overlapThreshold = box_w * box_h * 0.4
     for image in annotation:
         path_to_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
         print "[%s/%s] Processing image %s" % (number, len(annotation), path_to_image)
         img_width, img_height = img_size(path_to_image)
-        #boxes = [ box for box in image_split(img_width, img_height, box_w, box_h) ]
-        #boxes = []
-        #boxes.extend(image['boxes'])
+        boxes = [ box for box in image_split(img_width, img_height, box_w, box_h) ]
+        boxes = []
+        boxes.extend(image['boxes'])
         for box in image_split(img_width, img_height, box_w, box_h):
-            overlapBox, _ = max_overlap_box(image['boxes'], box, overlapThreshold)
+            overlapBox, _ = max_overlap_box(image['boxes'], box)
+            #overlapBox, _ = max_overlap_box(image['boxes'], box, overlapThreshold)
             if overlapBox:
                 #boxes.append(box)
                 box['label'] = overlapBox['label']
                 dataset_annotation.append({ 'filename': image['filename'], 'boxes': [box] })
         number += 1
 
-        #filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
-        #dst_image = os.path.join(base_dir, 'check',  filename)
-        #create_dir(os.path.join(base_dir, 'check'))
-        #draw_box(boxes, os.path.join('./data/original_data/', image['filename']), dst_image)
+        filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
+        dst_image = os.path.join(base_dir, 'check',  filename)
+        create_dir(os.path.join(base_dir, 'check'))
+        draw_box(boxes, os.path.join('./data/original_data/', image['filename']), dst_image)
 
     random.shuffle(dataset_annotation)
     num_train, num_validation, num_test = build_dataset(dataset_annotation, base_dir)
