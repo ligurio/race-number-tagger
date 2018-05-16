@@ -2,13 +2,16 @@
 
 from keras.models import load_model
 from keras.preprocessing import image
-from bib_prepare_dataset import image_split
 from bib_prepare_dataset import img_size
 import sys
 import settings
 import numpy as np
 
-def predict_image(img):
+def main():
+    img_path = sys.argv[1]
+    print "Image:", img_path
+    model = load_model(settings.MODEL_FILE_REAL)
+    img = image.load_img(img_path, target_size=img_size(img_path), grayscale=True)
     arr = np.array(img).reshape((settings.BOX_HEIGHT, settings.BOX_WIDTH, 1))
     arr = np.expand_dims(arr, axis=0)
     prediction = model.predict(arr)[0]
@@ -19,11 +22,8 @@ def predict_image(img):
                     bestclass = str(n)
                     bestconf = prediction[n]
 
-    return bestclass, bestconf
+    bestclass, bestconf = predict_image(image.img_to_array(img))
+    print 'I think this digit is a ' + bestclass + ' with ' + str(bestconf * 100) + '% confidence.'
 
-img_path = sys.argv[1]
-print "Image:", img_path
-model = load_model(settings.MODEL_FILE_REAL)
-img = image.load_img(img_path, target_size=img_size(img_path), grayscale=True)
-bestclass, bestconf = predict_image(image.img_to_array(img))
-print 'I think this digit is a ' + bestclass + ' with ' + str(bestconf * 100) + '% confidence.'
+if __name__ == "__main__":
+    main()
