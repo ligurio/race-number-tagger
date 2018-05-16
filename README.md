@@ -21,14 +21,14 @@
 - скачать csv с https://requester.mturk.com/
 - нарисовать боксы на фотографиях с помощью ```mturk-csv-review.py```
 - проревьюить качество разметки с ```feh --action1 'echo %F | xclip -i' image_dir```
-- заполнить поле RequestorFeedback в csv файле и загрузить его в MTurk
+- заполнить поле RequestorFeedback в csv файле и загрузить файл обратно в MTurk
 - удалить старый набор данных ```rm -rf data/race_numbers```
 - ```virtualenv pip```
 - ```source pip/bin/activate```
 - установить модули: ```pip install -r requirement.txt```
 - подготовить набор данных и аннотацию ```bib_prepare_dataset.py```
 - обучение на наборе данных MNIST - ```bib_train_mnist.py```
-- обучение на реальных изображениях ```bib_train_real.py```
+- обучение на реальных изображениях - ```bib_train_real.py```
 - использование ```bib_predict.py sample.jpg```
 
 Copyright 2018 Sergey Bronnikov
