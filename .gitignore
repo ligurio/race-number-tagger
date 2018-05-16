@@ -1,5 +1,6 @@
 *.pyc
 *.json
 *.log
-model.h5
-model-weights.h5
+*.h5
+*.csv
+*.jpg
