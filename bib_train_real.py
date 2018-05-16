@@ -21,7 +21,6 @@ validation_samples = len([ f for f in find_files(validation_dir, '*.jpg') ])
 test_samples = len([ f for f in find_files(test_dir, '*.jpg') ])
 epochs = 15
 batch_size = 16
-#batch_size = 128
 
 model = load_model(settings.MODEL_FILE_MNIST)
 
