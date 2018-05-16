@@ -8,6 +8,7 @@
 
 #### Идеи
 
+- пример демо - http://demo.caffe.berkeleyvision.org/
 - для демо-страницы ограничивать количество подключений
 - свободный домен - tagphoto.su
 - SLA example: https://www.aptible.com/legal/service-level-agreement/
