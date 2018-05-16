@@ -42,7 +42,7 @@ def draw_box(boxes, src_image, dst_image = None):
     :param boxes - list with box dicts
     :param src_image - image where boxes will be drawn
     :param dst_image - save image with drawn boxes on this path
-    :returns
+    :returns none
     """
 
     im = np.array(Image.open(src_image), dtype=np.uint8)
@@ -126,7 +126,7 @@ def write_json(filename, hits):
             outfile.write(json.dumps(hits, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
-def image_crop(orig_image_file, crop_image_file, box):
+def image_crop(box, orig_image_file, crop_image_file=None):
 
     assert os.path.exists(orig_image_file)
 
@@ -137,7 +137,10 @@ def image_crop(orig_image_file, crop_image_file, box):
     piece = im.crop(area)
     img = Image.new('RGB', size, (255,255,255,0))
     img.paste(piece)
-    img.save(crop_image_file)
+    if crop_image_file:
+        img.save(crop_image_file)
+
+    return img
 
 
 def split_box_per_number(box):
@@ -253,7 +256,7 @@ def build_dataset(annotation, base_dir):
         src_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
         dst_image = os.path.join(subdir, label, filename)
         print "[%s/%s] Put %s to the data set" % (num, len(annotation), dst_image)
-        image_crop(src_image, dst_image, image['boxes'][0])
+        image_crop(image['boxes'][0], src_image, dst_image)
         num += 1
 
     return len([ f for f in find_files(train_dir, '*.jpg') ]), \
