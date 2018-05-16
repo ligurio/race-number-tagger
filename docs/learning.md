@@ -1,10 +1,17 @@
 ### TODO
 
 - двойные номера для эстафет и экиденов https://www.facebook.com/runningexpertise/photos/pcb.1970190036343349/1970200376342315/?type=3&theater, https://www.facebook.com/runningexpertise/photos/pcb.1970190036343349/1970205253008494/?type=3&theater
-- поддержать видео
+- сделать поддержку видео
 - использовать номера и распознавалку вместо чипов
 - интегрироваться с https://www.imgix.com/
 - сделать демо: показывать картинку с размеченными номерами но список номеров текстом не показывать
+- с помощью другой модели детектировать контур спортсмена и показывать только
+номера, которые находятся в границах этого контура. См. например:
+	- https://github.com/fizyr/keras-retinanet
+	- https://github.com/facebookresearch/Detectron
+	- https://github.com/aurora95/Keras-FCN
+	- https://github.com/jinfagang/keras_frcnn
+	- https://github.com/riadhayachi/faster-rcnn-keras
 
 ### Похожие проекты:
 
