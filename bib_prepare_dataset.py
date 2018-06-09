@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#
-#
-
-import settings
-
+import argparse
 import csv
 import glob
 import os
@@ -36,7 +32,7 @@ def find_files(directory, pattern):
                 yield filename
 
 
-def draw_box(boxes, src_image, dst_image = None):
+def draw_box(boxes, src_image, dst_image=None):
     """
     Draw boxes on an image
     :param boxes - list with box dicts
@@ -50,8 +46,8 @@ def draw_box(boxes, src_image, dst_image = None):
     ax.imshow(im)
 
     for box in boxes:
-        rect = patches.Rectangle((box["left"],box["top"]),box["width"],box["height"],
-                                linewidth=1,edgecolor='r',facecolor='none')
+        rect = patches.Rectangle((box["left"], box["top"]), box["width"], box["height"],
+                                linewidth=1, edgecolor='r', facecolor='none')
         ax.add_patch(rect)
         ax.annotate(box['label'], (box["left"] + 25, box["top"] - 25), color='red', weight='bold',
                     fontsize=15, ha='center', va='center')
@@ -68,8 +64,10 @@ def is_intersected(box1, box2):
     :returns True of False
     """
 
-    h_overlaps = (box1['left'] <= box2['left'] + box2['width']) and (box1['left'] + box1['width'] >= box2['left'])
-    v_overlaps = (box1['top'] - box1['height'] <= box2['top']) and (box1['top'] >= box2['top'] - box2['height'])
+    h_overlaps = (box1['left'] <= box2['left'] + box2['width']
+                  ) and (box1['left'] + box1['width'] >= box2['left'])
+    v_overlaps = (box1['top'] - box1['height'] <= box2['top']
+                  ) and (box1['top'] >= box2['top'] - box2['height'])
 
     return h_overlaps and v_overlaps
 
@@ -79,7 +77,7 @@ def id_generator():
     Generate random string
     :returns string
     """
-    return ''.join([ random.choice(string.ascii_letters + string.digits) for n in xrange(32) ])
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(32)])
 
 
 def box_dim_percentile(hits, percentile):
@@ -116,14 +114,15 @@ def read_csv(csv_file):
             if line['AssignmentStatus'] == "Rejected":
                 continue
             boxes = json.loads(line['Answer.annotation_data'])
-            yield { "filename": line['Input.objects_to_find'], "boxes": boxes }
+            yield {"filename": line['Input.objects_to_find'], "boxes": boxes}
 
 
 def write_json(filename, hits):
-    
+
     print "JSON written to %s" % filename
     with open(filename, 'w') as outfile:
-            outfile.write(json.dumps(hits, sort_keys=True, indent=4, separators=(',', ': ')))
+            outfile.write(json.dumps(hits, sort_keys=True,
+                          indent=4, separators=(',', ': ')))
 
 
 def image_crop(box, orig_image_file, crop_image_file=None):
@@ -131,11 +130,12 @@ def image_crop(box, orig_image_file, crop_image_file=None):
     assert os.path.exists(orig_image_file)
 
     w, h = img_size(orig_image_file)
-    area = (box['left'], box['top'] - box['height'], box['left'] + box['width'], box['top'])
+    area = (box['left'], box['top'] - box['height'],
+            box['left'] + box['width'], box['top'])
     size = (int(box['width']), int(box['height']))
     im = Image.open(orig_image_file)
     piece = im.crop(area)
-    img = Image.new('RGB', size, (255,255,255,0))
+    img = Image.new('RGB', size, (255, 255, 255, 0))
     img.paste(piece)
     if crop_image_file:
         img.save(crop_image_file)
@@ -151,16 +151,16 @@ def split_box_per_number(box):
     """
 
     assert type(box) is dict
-    
+
     label = box['label']
     start_x = box['left']
     splitted_width = box['width'] / len(str(label))
     for number in str(label):
-        yield { 'label': number,
+        yield {'label': number,
                 'left': start_x,
                 'top': box['top'],
                 'height': box['height'],
-                'width': splitted_width }
+                'width': splitted_width}
         start_x = start_x + splitted_width
 
 
@@ -173,8 +173,10 @@ def overlap_area(box1, box2):
     """
 
     Rectangle = namedtuple('Rectangle', 'xmin ymin xmax ymax')
-    ra = Rectangle(box1['left'], box1['top'] - box1['height'], box1['left'] + box1['width'], box1['top'])
-    rb = Rectangle(box2['left'], box2['top'] - box2['height'], box2['left'] + box2['width'], box2['top'])
+    ra = Rectangle(box1['left'], box1['top'] - box1['height'],
+                   box1['left'] + box1['width'], box1['top'])
+    rb = Rectangle(box2['left'], box2['top'] - box2['height'],
+                   box2['left'] + box2['width'], box2['top'])
     dx = min(ra.xmax, rb.xmax) - max(ra.xmin, rb.xmin)
     dy = min(ra.ymax, rb.ymax) - max(ra.ymin, rb.ymin)
     if (dx >= 0) and (dy >= 0):
@@ -190,7 +192,7 @@ def max_overlap_box(boxes, box, threshold=0):
     :param box - box
     :returns box dict and overlap area
     """
-    
+
     overlapBox = {}
     maxArea = threshold
     for b in boxes:
@@ -219,12 +221,13 @@ def image_split(img_width, img_height, box_width, box_height):
 
     for y_pos in range(int(round(img_height // box_height)) * 2):
         for x_pos in range(int(round(img_width // box_width)) * 2):
-            box = { 'height': box_height, 'width': box_width,
-                    'top': y_pos*box_height/2, 'left': x_pos*box_width/2, 'label': '' }
+            box = {'height': box_height, 'width': box_width,
+                    'top': y_pos * box_height / 2, 'left': x_pos * box_width / 2, 'label': ''}
             yield box
 
 
-def build_dataset(annotation, base_dir):
+def build_dataset(annotation, base_dir, orig_images_dir,
+            train_ratio, validate_ratio, test_ratio):
     """
 
     """
@@ -238,9 +241,9 @@ def build_dataset(annotation, base_dir):
         create_dir(os.path.join(validation_dir, str(number)))
         create_dir(os.path.join(test_dir, str(number)))
 
-    num_train_images = len(annotation) * settings.IMAGE_SUBSETS['train']/100
-    num_validate_images = len(annotation) * settings.IMAGE_SUBSETS['validate']/100
-    num_test_images = len(annotation) * settings.IMAGE_SUBSETS['test']/100
+    num_train_images = len(annotation) * train_ratio / 100
+    num_validate_images = len(annotation) * validate_ratio / 100
+    num_test_images = len(annotation) * test_ratio / 100
     num = 1
     for image in annotation:
         label = str(image['boxes'][0]['label'])
@@ -252,16 +255,17 @@ def build_dataset(annotation, base_dir):
             subdir = validation_dir
         else:
             subdir = test_dir
-        filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
-        src_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
+        filename = image['filename'].split(
+            '.')[0] + '-' + id_generator() + '.jpg'
+        src_image = os.path.join(orig_images_dir, image['filename'])
         dst_image = os.path.join(subdir, label, filename)
         print "[%s/%s] Put %s to the data set" % (num, len(annotation), dst_image)
         image_crop(image['boxes'][0], src_image, dst_image)
         num += 1
 
-    return len([ f for f in find_files(train_dir, '*.jpg') ]), \
-           len([ f for f in find_files(validation_dir, '*.jpg') ]), \
-           len([ f for f in find_files(test_dir, '*.jpg') ])
+    return len([f for f in find_files(train_dir, '*.jpg')]), \
+           len([f for f in find_files(validation_dir, '*.jpg')]), \
+           len([f for f in find_files(test_dir, '*.jpg')])
 
 
 def img_size(path_to_image):
@@ -279,25 +283,43 @@ def img_size(path_to_image):
 
 def main():
 
-    base_dir = './data/race_numbers/'
-    print "Reading CSV results %s" % settings.CSV_RESULTS
+    annotation_path = 'data/annotation.json'
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-csv", type=str, dest="csv",
+                        help="csv results")
+    parser.add_argument("-percentile", type=int, dest="percentile",
+                        help="percentile")
+    parser.add_argument("-orig_images_dir", type=str, dest="orig_images_dir",
+	                help="directory with original images")
+    parser.add_argument("-processed_images_dir", type=str, dest="processed_images_dir",
+                        help="directory with processed images")
+    parser.add_argument("-train_ratio", type=int, dest="train_ratio",
+                        help="train ratio")
+    parser.add_argument("-validate_ratio", type=int, dest="validate_ratio",
+                        help="validate ratio")
+    parser.add_argument("-test_ratio", type=int, dest="test_ratio",
+                        help="test ratio")
+    args = parser.parse_args()
+
+    print "Reading CSV results %s" % args.csv
     annotation = []
-    for image in read_csv(settings.CSV_RESULTS):
+    for image in read_csv(args.csv):
         boxes = []
         for box in image['boxes']:
             boxes.extend([ b for b in split_box_per_number(box) ])
         annotation.append({ 'filename': image['filename'], 'boxes': boxes })
-    box_w, box_h = box_dim_percentile(annotation, settings.PERCENTILE)
+    box_w, box_h = box_dim_percentile(annotation, args.percentile)
+    print "width and height values are %s and %s accordingly" % (box_w, box_h)
 
     # For learning we should have images with same fixed size.
     # Split original images on small images with fixed size (box_w x box_h)
     # and update labels according to intersections with boxes from annotation
     number = 1
     dataset_annotation = []
-    #overlapThreshold = box_w * box_h * 0.4
+    # overlapThreshold = box_w * box_h * 0.4
     for image in annotation:
-        path_to_image = os.path.join(settings.ORIGINAL_IMAGES, image['filename'])
+        path_to_image = os.path.join(args.orig_images_dir, image['filename'])
         print "[%s/%s] Processing image %s" % (number, len(annotation), path_to_image)
         img_width, img_height = img_size(path_to_image)
         boxes = [ box for box in image_split(img_width, img_height, box_w, box_h) ]
@@ -305,29 +327,33 @@ def main():
         boxes.extend(image['boxes'])
         for box in image_split(img_width, img_height, box_w, box_h):
             overlapBox, _ = max_overlap_box(image['boxes'], box)
-            #overlapBox, _ = max_overlap_box(image['boxes'], box, overlapThreshold)
+            # overlapBox, _ = max_overlap_box(image['boxes'], box, overlapThreshold)
             if overlapBox:
-                #boxes.append(box)
+                # boxes.append(box)
                 box['label'] = overlapBox['label']
                 dataset_annotation.append({ 'filename': image['filename'], 'boxes': [box] })
         number += 1
 
         filename = image['filename'].split('.')[0] + '-' + id_generator() + '.jpg'
-        dst_image = os.path.join(base_dir, 'check',  filename)
-        create_dir(os.path.join(base_dir, 'check'))
-        draw_box(boxes, os.path.join('./data/original_data/', image['filename']), dst_image)
+        dst_image = os.path.join(args.processed_images_dir, 'check',  filename)
+        create_dir(os.path.join(args.processed_images_dir, 'check'))
+        draw_box(boxes, os.path.join(args.orig_images_dir, image['filename']), dst_image)
 
+    print "width and height values are %s and %s accordingly" % (box_w, box_h)
     random.shuffle(dataset_annotation)
-    num_train, num_validation, num_test = build_dataset(dataset_annotation, base_dir)
+
+    num_train, num_validation, num_test = build_dataset(dataset_annotation, processed_images_dir,
+							args.orig_images_dir, args.train_ratio,
+							args.validate_ratio, args.test_ratio)
     print 'total training images:', num_train
     print 'total validation images:', num_validation
     print 'total test images:', num_test
 
     # show information about processing annotation
-    write_json('data/annotation.json', annotation)
+    write_json(annotation_path, annotation)
     print "total number of images in annotation with box per number", len(annotation)
     print "total number of images in dataset annotation", len(dataset_annotation)
-    print "Please update width and height in settings.py by values %s and %s accordingly" % (box_w, box_h)
+    print "width and height values are %s and %s accordingly" % (box_w, box_h)
 
 
 if __name__ == '__main__':
