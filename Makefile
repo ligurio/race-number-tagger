@@ -35,7 +35,7 @@ prepare:
 			-test_ratio $(TEST_RATIO)
 
 train:
-	python bib_train.py -box_w $(BOX_WIDTH)	\
+	python bib_train.py -box_w $(BOX_WIDTH)		\
 			-box_h $(BOX_HEIGHT)		\
 			-model_file $(MODEL)		\
 			-processed_images_dir $(PROCESSED_IMAGES)
