@@ -50,6 +50,7 @@
 	- [Tutorial: How to label thousands of images using the crowd](https://blog.mturk.com/tutorial-how-to-label-thousands-of-images-using-the-crowd-bea164ccbefc)
 	- https://requester.mturk.com/batches/3180686
 	- https://s3.console.aws.amazon.com/s3/object/running-ml/0003_1683929.jpg?region=us-east-1&tab=overview
+- чтобы отклонить хит нужно в колонке Reject поставить x и заполнить колонку RequestorFeedback
  
 - https://s3.console.aws.amazon.com
 - потренироваться:
