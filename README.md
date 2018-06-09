@@ -1,3 +1,5 @@
+Убрать аннотацию для 0029_1311289.jpg
+
 Каждый раз после соревнования возникает одна и та же проблемы: у участника
 соревнования - найти фотографии, на которых он присутствует, у фотографов -
 найти спортсменов, которые попал в кадр его фотоаппарата. В случае решения этих
@@ -26,9 +28,9 @@
 - ```virtualenv pip```
 - ```source pip/bin/activate```
 - установить модули: ```pip install -r requirement.txt```
-- подготовить набор данных и аннотацию ```bib_prepare_dataset.py```
-- обучение на наборе данных MNIST - ```bib_train_mnist.py```
-- обучение на реальных изображениях - ```bib_train_real.py```
-- использование ```bib_predict.py sample.jpg```
+- ```make prepare```
+- ```make train```
+- использование - ```bib_predict.py sample.jpg```
+- мониторинг обучения модели: ```mkdir train_log; tensorboard --logdir=train_log```
 
 Copyright 2018 Sergey Bronnikov
