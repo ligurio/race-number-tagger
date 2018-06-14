@@ -286,20 +286,22 @@ def main():
     annotation_path = 'data/annotation.json'
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-csv", type=str, dest="csv",
+    parser.add_argument("--csv", type=str, dest="csv",
                         help="csv results")
-    parser.add_argument("-percentile", type=int, dest="percentile",
+    parser.add_argument("--percentile", type=int, dest="percentile",
                         help="percentile")
-    parser.add_argument("-orig_images_dir", type=str, dest="orig_images_dir",
+    parser.add_argument("--orig_images_dir", type=str, dest="orig_images_dir",
 	                help="directory with original images")
-    parser.add_argument("-processed_images_dir", type=str, dest="processed_images_dir",
+    parser.add_argument("--processed_images_dir", type=str, dest="processed_images_dir",
                         help="directory with processed images")
-    parser.add_argument("-train_ratio", type=int, dest="train_ratio",
+    parser.add_argument("--train_ratio", type=int, dest="train_ratio",
                         help="train ratio")
-    parser.add_argument("-validate_ratio", type=int, dest="validate_ratio",
+    parser.add_argument("--validate_ratio", type=int, dest="validate_ratio",
                         help="validate ratio")
-    parser.add_argument("-test_ratio", type=int, dest="test_ratio",
+    parser.add_argument("--test_ratio", type=int, dest="test_ratio",
                         help="test ratio")
+    parser.add_argument('--calc_size', dest='calc_size', action='store_true',
+                        help="calculate piece size only")
     args = parser.parse_args()
 
     print "Reading CSV results %s" % args.csv
@@ -311,6 +313,8 @@ def main():
         annotation.append({ 'filename': image['filename'], 'boxes': boxes })
     box_w, box_h = box_dim_percentile(annotation, args.percentile)
     print "width and height values are %s and %s accordingly" % (box_w, box_h)
+    if args.calc_size:
+        return
 
     # For learning we should have images with same fixed size.
     # Split original images on small images with fixed size (box_w x box_h)
