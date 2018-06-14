@@ -11,13 +11,23 @@ PERCENTILE=75
 BOX_HEIGHT?=166
 BOX_WIDTH?=67
 
+DATE=$(shell date +%Y-%m-%d)
+BACKUP_FILE="race-number-tagger-$(DATE).tgz"
+BASE=$(basename $PWD)
+
 all: prepare train
 
 test:
 	python -m unittest test_bib
 
 backup:
-	tar cvzf ../race-number-tagger-`date +%Y-%m-%d`.tgz --exclude='../race-number-tagger/data/original_data/*' --exclude='../race-number-tagger/data/race_numbers/*' --exclude='../race-number-tagger/data/*.h5' ../race-number-tagger
+	@echo $(BASE)
+	tar cvzf ../$(BACKUP_FILE) 				\
+		--exclude='../$(BASE)/$(ORIG_IMAGES_PATH)/'	\
+		--exclude='../$(BASE)/$(PROCESSED_IMAGES)/'	\
+		--exclude='../$(BASE)/$(MODEL)'			\
+		--exclude='../$(BASE)/$(BACKUP_FILE)' .
+	@echo "Backup file - $(BACKUP_FILE)"
 
 clean:
 	rm -f *.pyc
