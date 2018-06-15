@@ -312,7 +312,7 @@ def main():
             boxes.extend([ b for b in split_box_per_number(box) ])
         annotation.append({ 'filename': image['filename'], 'boxes': boxes })
     box_w, box_h = box_dim_percentile(annotation, args.percentile)
-    print "width and height values are %s and %s accordingly" % (box_w, box_h)
+    print "BOX_WIDTH - %s, BOX_HEIGHT - %s" % (box_w, box_h)
     if args.calc_size:
         return
 
@@ -343,7 +343,7 @@ def main():
         create_dir(os.path.join(args.processed_images_dir, 'check'))
         draw_box(boxes, os.path.join(args.orig_images_dir, image['filename']), dst_image)
 
-    print "width and height values are %s and %s accordingly" % (box_w, box_h)
+    print "BOX_WIDTH - %s, BOX_HEIGHT - %s" % (box_w, box_h)
     random.shuffle(dataset_annotation)
 
     num_train, num_validation, num_test = build_dataset(dataset_annotation, processed_images_dir,
@@ -357,7 +357,7 @@ def main():
     write_json(annotation_path, annotation)
     print "total number of images in annotation with box per number", len(annotation)
     print "total number of images in dataset annotation", len(dataset_annotation)
-    print "width and height values are %s and %s accordingly" % (box_w, box_h)
+    print "BOX_WIDTH - %s, BOX_HEIGHT - %s" % (box_w, box_h)
 
 
 if __name__ == '__main__':
