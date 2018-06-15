@@ -2,6 +2,7 @@ MODEL="data/model.h5"
 CSV_RESULTS="data/mturk_results.csv"
 ORIG_IMAGES_PATH="data/original_data/"
 PROCESSED_IMAGES="data/race_numbers/"
+TRAIN_LOG="train_log"
 
 TRAIN_RATIO=85
 VALIDATE_RATIO=10
@@ -27,11 +28,12 @@ backup:
 	@echo "Backup file - $(BACKUP_FILE)"
 
 clean:
-	rm -f *.pyc $(MODEL)
+	rm -f *.pyc $(MODEL) $(TRAIN_LOG)
 
 review:
 	@echo "Prepare images to review"
 	python mturk-csv-review.py
+	@echo "Build image list - find $(PROCESSED_IMAGES) -type f"
 
 prepare:
 	@echo "* Percentile:		$(PERCENTILE)"
@@ -50,10 +52,8 @@ prepare:
 			--validate_ratio $(VALIDATE_RATIO)		\
 			--test_ratio $(TEST_RATIO)
 
-
 train:
 ifeq ($(strip $(BOX_HEIGHT)),)
-#ifeq ($(filter ,$(BOX_WIDTH) $(BOX_HEIGHT)),)
 	@echo "Please set both BOX_HEIGHT and BOX_WIDTH variables"
 	@echo "Calculating box size..."
 	@python bib_prepare_dataset.py --csv $(CSV_RESULTS)		\
@@ -71,8 +71,7 @@ else
 			--processed_images_dir $(PROCESSED_IMAGES)
 endif
 
-
-update:
+update-modules:
 	@echo "Update Python modules"
 	@pip install --upgrade pip
 	@pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
