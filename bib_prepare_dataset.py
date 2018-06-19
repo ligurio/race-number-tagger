@@ -346,7 +346,7 @@ def main():
     print "BOX_WIDTH - %s, BOX_HEIGHT - %s" % (box_w, box_h)
     random.shuffle(dataset_annotation)
 
-    num_train, num_validation, num_test = build_dataset(dataset_annotation, processed_images_dir,
+    num_train, num_validation, num_test = build_dataset(dataset_annotation, args.processed_images_dir,
 							args.orig_images_dir, args.train_ratio,
 							args.validate_ratio, args.test_ratio)
     print 'total training images:', num_train
