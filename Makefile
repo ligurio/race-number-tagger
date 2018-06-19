@@ -62,13 +62,10 @@ ifeq ($(strip $(BOX_HEIGHT)),)
 else
 	@echo "* Box width:		$(BOX_WIDTH)"
 	@echo "* Box height:		$(BOX_HEIGHT)"
-	@echo "* Model path:		$(MODEL)"
 	@echo "* Processed image dir:	$(PROCESSED_IMAGES)"
 	@echo
-	@echo "Training model..."
-	@python bib_train.py --model_file $(MODEL)			\
-			--box_w $(BOX_WIDTH) --box_h $(BOX_HEIGHT)	\
-			--processed_images_dir $(PROCESSED_IMAGES)
+	@python bib_train.py --processed_images_dir $(PROCESSED_IMAGES)	\
+			--box_w $(BOX_WIDTH) --box_h $(BOX_HEIGHT)
 endif
 
 update-modules:
