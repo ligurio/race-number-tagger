@@ -1,7 +1,6 @@
-MODEL="data/model.h5"
 CSV_RESULTS="data/mturk_results.csv"
-ORIG_IMAGES_PATH="data/original_data/"
-PROCESSED_IMAGES="data/race_numbers/"
+ORIG_IMAGES_PATH="data/original_data"
+PROCESSED_IMAGES="data/race_numbers"
 TRAIN_LOG="train_log"
 
 TRAIN_RATIO=85
@@ -11,7 +10,7 @@ PERCENTILE=75
 
 DATE=$(shell date +%Y-%m-%d)
 BACKUP_FILE="race-number-tagger-$(DATE).tgz"
-BASE=$(basename $PWD)
+BASE=$(basename $(PWD))
 
 all: prepare train
 
@@ -19,12 +18,10 @@ test:
 	python -m unittest test_bib
 
 backup:
-	@echo "Create backup $(BASE)"
-	@tar cvzf ../$(BACKUP_FILE) 				\
-		--exclude='../$(BASE)/$(ORIG_IMAGES_PATH)/'	\
-		--exclude='../$(BASE)/$(PROCESSED_IMAGES)/'	\
-		--exclude='../$(BASE)/$(MODEL)'			\
-		--exclude='../$(BASE)/$(BACKUP_FILE)' .
+	@echo "Creating backup of $(BASE)"
+	@tar cvzf ../$(BACKUP_FILE)			\
+		--exclude $(ORIG_IMAGES_PATH)		\
+		--exclude $(PROCESSED_IMAGES) .	2>&1 > /dev/null
 	@echo "Backup file - $(BACKUP_FILE)"
 
 clean:
