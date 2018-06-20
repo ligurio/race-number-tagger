@@ -8,11 +8,12 @@ import h5py
 import os
 import matplotlib.pyplot as plt
 import keras
+import shutil
 from keras import backend as K
 from keras.datasets import mnist
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D, Reshape
 from keras.models import Sequential
 from keras.models import model_from_json
 from keras.models import load_model
@@ -21,9 +22,11 @@ from bib_prepare_dataset import find_files
 from PIL import Image
 
 
+LOG_DIR = "train_log"
+
 callbacks = [
     keras.callbacks.TensorBoard(
-        log_dir='train_log',
+        log_dir=LOG_DIR,
         histogram_freq=1,
         embeddings_freq=1,
     )
@@ -147,7 +150,7 @@ def train_baseline(batch_size, num_classes, epochs, box_h, box_w):
     return model
 
 
-def train_bib_numbers(base_model, epochs, batch_size, base_dir, box_h, box_w):
+def train_bib_numbers(base_model, epochs, batch_size, num_classes, base_dir, box_h, box_w):
 
     train_dir = os.path.join(base_dir, 'train')
     validation_dir = os.path.join(base_dir, 'validation')
@@ -163,12 +166,9 @@ def train_bib_numbers(base_model, epochs, batch_size, base_dir, box_h, box_w):
     else:
             input_shape = (img_rows, img_cols, 1)
 
-    print(base_model.summary())
-    for layer in base_model.layers:
-            print(layer.get_output_at(0).get_shape().as_list())
-
     model = Sequential()
     model.add(base_model)
+    model.add(Reshape((81, 31, 64), input_shape=input_shape))
     model.add(Conv2D(32, kernel_size=(3, 3),
                      activation='relu',
                      input_shape=input_shape))
@@ -180,12 +180,7 @@ def train_bib_numbers(base_model, epochs, batch_size, base_dir, box_h, box_w):
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax'))
 
-    print(base_model.summary())
-    print("Number of trainable weights before freezing the base:", len(model.trainable_weights))
-    base_model.trainable = False
-    print("Number of trainable weights after freezing the base:", len(model.trainable_weights))
     print(model.summary())
-
     model.compile(loss=keras.losses.categorical_crossentropy,
                               optimizer=keras.optimizers.Adadelta(),
                               metrics=['accuracy'])
@@ -230,6 +225,13 @@ def train_bib_numbers(base_model, epochs, batch_size, base_dir, box_h, box_w):
     return history, model
 
 
+def log_cleanup(logdir):
+
+    print("Remove log directory %s" % logdir)
+    shutil.rmtree(logdir)
+    create_dir(logdir)
+
+
 def main():
 
     batch_size = 128
@@ -240,22 +242,44 @@ def main():
     bib_batch_size = 16
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-box_w", type=int, dest="box_w",
+    parser.add_argument("--box_w", type=int, dest="box_w",
                         help="box width")
-    parser.add_argument("-box_h", type=int, dest="box_h",
+    parser.add_argument("--box_h", type=int, dest="box_h",
                         help="box height")
-    parser.add_argument("-model_file", type=str, dest="model_file",
-                        help="path to a model file")
-    parser.add_argument("-processed_images_dir", type=str, dest="processed_images_dir",
+    parser.add_argument("--processed_images_dir", type=str, dest="processed_images_dir",
                         help="path to a dir with processed images")
     args = parser.parse_args()
 
-    base_model = train_baseline(batch_size, num_classes, epochs, args.box_h, args.box_w)
-    history, model = train_bib_numbers(base_model, bib_epochs, bib_batch_size,
-                                    processed_images_dir, box_h, box_w)
-    plot_results(history)
-    model.save(args.model_file, overwrite=True)
+    #
+    # Base model training
+    #
+    log_cleanup(LOG_DIR)
+    base_model_filename = 'base_model_h%s_w%s.h5' % (args.box_h, args.box_w)
+    if not os.path.isfile(base_model_filename):
+        print("Base model %s is not exist. Starting to train." % base_model_filename)
+        base_model = train_baseline(batch_size, num_classes, epochs, args.box_h, args.box_w)
+        print("Save base model to %s." % base_model_filename)
+        base_model.save(base_model_filename)
 
+    #
+    # Main model training
+    #
+    base_model = load_model(base_model_filename)
+    print(base_model.summary())
+    print("Removing layers in a base model")
+    base_model = keras.Model(base_model.inputs, base_model.layers[-5].output)
+    print(base_model.summary())
+    print("Freezing layers in a base model")
+    base_model.trainable = False
+    # Freeze pretrained layers
+    for layer in base_model.layers:
+        layer.trainable = False
+    log_cleanup(LOG_DIR)
+    history, model = train_bib_numbers(base_model, bib_epochs, bib_batch_size, num_classes,
+                                    args.processed_images_dir, args.box_h, args.box_w)
+    model_filename = 'model_h%s_w%s.h5' % (args.box_h, args.box_w)
+    plot_results(history)
+    model.save(model_filename, overwrite=True)
 
 if __name__ == "__main__":
     main()
