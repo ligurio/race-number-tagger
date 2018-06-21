@@ -277,8 +277,8 @@ def main():
     log_cleanup(LOG_DIR)
     history, model = train_bib_numbers(base_model, bib_epochs, bib_batch_size, num_classes,
                                     args.processed_images_dir, args.box_h, args.box_w)
-    model_filename = 'model_h%s_w%s.h5' % (args.box_h, args.box_w)
-    plot_results(history)
+    model_filename = "model_h%s_w%s.h5" % (args.box_h, args.box_w)
+    plot_results(history, "plot_h%s_w%s.h5" % (args.box_h, args.box_w))
     model.save(model_filename, overwrite=True)
 
 if __name__ == "__main__":
